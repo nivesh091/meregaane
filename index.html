@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="utility.css">
+</head>
+<body>
+    <div class="container flex">
+        <div class="left border">
+            <div class="home pointer">
+                <div class="logo_section">
+                    <div class="player pointer"><b>Music player</b></div>
+                    <div><img class="close_btn" src="close.png" alt=""></div>
+                </div>
+                <ul class="home_list">
+                    <li class="flex home_btn pointer"><img class="mini_images" src="home.png" alt="">Home</li>
+                    <li class="flex pointer"><img class="mini_images" src="serchicon.png" alt="">Search</li>
+                    <div class="your_library">
+                        <div class="text_library">
+                            <img class="mini_images_1" src="library.png" alt="">
+                            <div class="subfolder_name">
+                                <b class="folder_update">Your Library</b>
+                            </div>
+                        </div>
+                        <div class="song_count">None</div>
+                    </div>
+                </ul>
+            </div>
+            <div class="folder_songs_list">
+            </div>
+            <div class="left_bottum">
+                <ul>
+                    © 2026 Designed & Developed by <strong>Nivesh Kumar</strong>
+                </ul>
+            </div>
+        </div>
+        <div class="right border">
+            <div class="top">
+                <div class="top_content">
+                    <div class="top_left">
+                        <img class="menu_btn pointer" src="menu.png" alt="">
+                        <div class="logoname"><b>Your Music player</b></div>
+                    </div>
+                    <div class="top_right">
+                        <button class="sing_btn  pointer sign_up_btn">Sign up</button>
+                        <button class="sing_btn  pointer">Log in</button>
+                    </div>
+                </div>
+            </div>
+            <div class="Music_player">
+                <div class="playlist_text">
+                    <b>Your Playlists</b>
+                </div>
+            </div>
+            <div class="folder_list">
+            </div>
+            <div class="play_baar border">
+                <div class="items">
+                    <div class="part_1"><b class="myname">Tap on playlist to play the song...</b></div>
+                    <div class="part_2">
+                        <img class="play_btns play_last pointer" src="left_play.png" alt="">
+                        <img class="play_btns pointer center_play_img play_or_pause no_filter" src="pause_btn.png"
+                            alt="">
+                        <img class="play_btns play_next pointer" src="right_play.png" alt="">
+                    </div>
+                    <div class="pointer part_3">
+                        <div class="time_details">Enjoy Your song</div>
+                        <div class="volume_btn_mute"><img class="mute_btn vol_img" src="unmute_img.png" alt=""></div>
+                        <input type="range" min="0" max="100" value="100" class="volume_baar"></input>
+                    </div>
+                </div>
+                <input type="range" min="0" max="100" value="0" class="song_baar"></input>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script src="script.js"></script>
+    <script src="advance.js"></script>
+</body>
+</html>
