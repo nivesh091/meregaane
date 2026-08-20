@@ -108,7 +108,8 @@ async function getting_songs(number) {
 
     for (let item of files) {
         if (item.name.endsWith(".mp3")) {
-            let href = item.download_url;
+            // FIX: encodeURI use karke space aur special characters ko fix kiya gaya hai
+            let href = encodeURI(item.download_url);
             let new_audios = new Audio(href);
             songs_address.push(new_audios);
 
@@ -141,7 +142,7 @@ async function getting_songs(number) {
     }
     await check_song();
     current_folder = number;
-} // <-- Ye wala closing bracket miss tha
+}
 
 async function loading_song() {
     for (let i = 0; i < playlists_name.length; i++) {
