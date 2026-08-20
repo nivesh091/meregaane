@@ -417,7 +417,8 @@ body {
     width: 80%;
     height: 64%;
     margin-top: 10px;
-    background: linear-gradient(135deg, #1e1b4b, #312e81); /* Clean Gradient */
+    background-image: url("back.jpg");
+    background-size: cover;
     border-radius: 10px;
     border: 0.5px solid white;
 }
