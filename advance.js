@@ -50,8 +50,10 @@ let csec = 0;
 let isMute = 0;
 
 async function upadating_song_count(number) {
-    let folder_lenght = await song_name.length;
-    song_count.innerHTML = await current_song + 1 + "/" + folder_lenght;
+    // let folder_lenght = await song_name.length;
+    // song_count.innerHTML = await current_song + 1 + "/" + folder_lenght;
+    let folder_lenght = song_name.length;
+    song_count.innerHTML = (current_song + 1) + "/" + folder_lenght;
     folder_update.innerHTML = playlists_name[number];
 }
 
@@ -103,7 +105,8 @@ async function getting_songs(number) {
     current_song = -1;
     current_folder = -1;
     folder_songs_list.innerHTML = "";
-    let res = await fetch(playlists_address[number] + "/");
+    // let res = await fetch(playlists_address[number] + "/");
+    let res = await fetch(playlists_address[number]);
     let resp = await res.text();
     let div = document.createElement("div");
     div.innerHTML = resp;
