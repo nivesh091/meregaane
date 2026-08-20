@@ -58,6 +58,7 @@ async function upadating_song_count(number) {
 }
 
 // FETCH DATA FROM JSON FILE INSTEAD OF DIRECTORY LISTING
+// New Code (JSON based):
 (async function () {
     try {
         let res = await fetch("songs.json");
@@ -79,7 +80,7 @@ async function upadating_song_count(number) {
         });
         await loading_song();
     } catch (err) {
-        console.error("Error loading songs.json:", err);
+        console.error("Error loading songs.json file:", err);
     }
 })();
 
