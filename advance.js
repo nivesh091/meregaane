@@ -1,7 +1,5 @@
 let folder_list = document.getElementsByClassName("folder_list")[0];
 let folder_songs_list = document.getElementsByClassName("folder_songs_list")[0];
-let play_baar = document.getElementsByClassName("play_baar")[0];
-let folders = document.getElementsByClassName("folders");
 let song_count = document.getElementsByClassName("song_count")[0];
 let folder_update = document.getElementsByClassName("folder_update")[0];
 let songs_player = document.getElementsByClassName("songs");
@@ -15,7 +13,6 @@ let play_now_text = document.getElementsByClassName("play_left_text");
 let vol_img = document.getElementsByClassName("vol_img")[0];
 let center_play_img = document.getElementsByClassName("center_play_img")[0];
 let song_play_img = document.getElementsByClassName("song_play_img");
-let sub_folder = document.getElementsByClassName("folder_list")[0];
 let time = document.getElementsByClassName("time_details")[0];
 let volume_baar = document.getElementsByClassName("volume_baar")[0];
 let song_baar = document.getElementsByClassName("song_baar")[0];
@@ -34,7 +31,6 @@ let playlists_name = [];
 let playlists_address = [];
 let songs_address = [];
 let song_name = [];
-let current_time = 0;
 let csong_duratin = 0;
 let play = 0;
 let isMute = 0;
@@ -45,12 +41,11 @@ async function upadating_song_count(number) {
     if (folder_update && playlists_name[number]) folder_update.innerHTML = playlists_name[number];
 }
 
-// GitHub Repos API se playlists fetch karna
 (async function () {
     try {
         let repoApiUrl = "https://api.github.io/repos/nivesh091/meregaane/contents/songs";
         let res = await fetch(repoApiUrl);
-        if (!res.ok) throw new Error("API call failed");
+        if (!res.ok) throw new Error("API Limit Reached or Directory Missing");
         let files = await res.json();
 
         folder_list.innerHTML = "";
@@ -58,21 +53,35 @@ async function upadating_song_count(number) {
             if (item.type === "dir") {
                 playlists_name.push(item.name);
                 playlists_address.push(item.path);
-                folder_list.innerHTML +=
-                    `<div class="folders pointer">
-                        <div class="playlist_image_frame"></div>
-                        <div class="card_text">
-                            <div class="card_text_1"><b>${item.name.replaceAll("_", " ")}</b></div>
-                            <div class="card_text_2">Nivesh</div>
-                        </div>
-                    </div>`;
+                renderFolderUI(item.name);
             }
         }
-        await loading_song();
     } catch (err) {
-        console.error("404 Prevented - API Limit or Path error:", err);
+        console.warn("GitHub API Unavailable. Fallback mode activated:", err);
+        // Fallback folders if GitHub API hits rate limit
+        let fallbackFolders = ["Kishore_Kumar", "Arijit_Singh", "Sad_Songs"]; 
+        playlists_name = [];
+        playlists_address = [];
+        folder_list.innerHTML = "";
+        for (let fName of fallbackFolders) {
+            playlists_name.push(fName);
+            playlists_address.push(`songs/${fName}`);
+            renderFolderUI(fName);
+        }
     }
+    await loading_song();
 })();
+
+function renderFolderUI(name) {
+    folder_list.innerHTML +=
+        `<div class="folders pointer">
+            <div class="playlist_image_frame"></div>
+            <div class="card_text">
+                <div class="card_text_1"><b>${name.replaceAll("_", " ")}</b></div>
+                <div class="card_text_2">Nivesh</div>
+            </div>
+        </div>`;
+}
 
 async function pauseAllSong() {
     play = 0;
@@ -88,55 +97,59 @@ async function pauseAllSong() {
 }
 
 async function getting_songs(number) {
-    song_baar.value = 0;
+    if (song_baar) song_baar.value = 0;
     await pauseAllSong();
     song_name.length = 0;
     songs_address.length = 0;
     current_song = -1;
     folder_songs_list.innerHTML = "";
 
-    // Safely encode folder path to prevent 404
     let folderPath = playlists_address[number].split('/').map(p => encodeURIComponent(p)).join('/');
-    let res = await fetch(`https://api.github.io/repos/nivesh091/meregaane/contents/${folderPath}`);
-    let files = await res.json();
+    
+    try {
+        let res = await fetch(`https://api.github.io/repos/nivesh091/meregaane/contents/${folderPath}`);
+        let files = await res.json();
 
-    for (let item of files) {
-        if (item.name.toLowerCase().endsWith(".mp3")) {
-            // Encode audio download URL
-            let href = item.download_url ? item.download_url : `https://raw.githubusercontent.com/nivesh091/meregaane/main/${folderPath}/${encodeURIComponent(item.name)}`;
-            let new_audios = new Audio(href);
-            songs_address.push(new_audios);
+        if (Array.isArray(files)) {
+            for (let item of files) {
+                if (item.name.toLowerCase().endsWith(".mp3")) {
+                    let rawUrl = item.download_url || `https://raw.githubusercontent.com/nivesh091/meregaane/main/${folderPath}/${encodeURIComponent(item.name)}`;
+                    let new_audios = new Audio(rawUrl);
+                    songs_address.push(new_audios);
 
-            let nm = item.name.replace(/\.mp3$/i, "");
-            nm = nm.replaceAll("_", " ").replaceAll("(MP3 160K)", "").trim();
-            song_name.push(nm);
+                    let nm = item.name.replace(/\.mp3$/i, "").replaceAll("_", " ").replaceAll("(MP3 160K)", "").trim();
+                    song_name.push(nm);
 
-            folder_songs_list.innerHTML +=
-                `<div class="songs pointer">
-                <div class="song_list_left">
-                    <div class="song_img"><img class="mini_images_2" src="mp3_song.png" alt=""></div>
-                    <div class="center_left ">
-                        <div class="song_name">
-                            <p>${nm}</p>
+                    folder_songs_list.innerHTML +=
+                        `<div class="songs pointer">
+                        <div class="song_list_left">
+                            <div class="song_img"><img class="mini_images_2" src="mp3_song.png" alt=""></div>
+                            <div class="center_left">
+                                <div class="song_name"><p>${nm}</p></div>
+                                <div class="name">Nivesh</div>
+                            </div>
                         </div>
-                        <div class="name">Nivesh</div>
-                    </div>
-                </div>
-                <div class="play_left">
-                    <div class="play_left_text">Play Now</div>
-                    <img class="mini_images_3 song_play_img play_or_pause invert" src="play_btn_1.png" alt="">
-                </div>
-            </div>`;
+                        <div class="play_left">
+                            <div class="play_left_text">Play Now</div>
+                            <img class="mini_images_3 song_play_img play_or_pause invert" src="play_btn_1.png" alt="">
+                        </div>
+                    </div>`;
+                }
+            }
         }
+    } catch (e) {
+        console.error("Error loading songs from folder:", e);
     }
+
     await check_song();
     current_folder = number;
 }
 
 async function loading_song() {
+    let folderElements = document.getElementsByClassName("folders");
     for (let i = 0; i < playlists_name.length; i++) {
-        if (folders[i]) {
-            folders[i].addEventListener("click", () => {
+        if (folderElements[i]) {
+            folderElements[i].onclick = () => {
                 if (i != current_folder) { getting_songs(i); }
                 if (window.innerWidth > 800) {
                     left.style.display = "block";
@@ -149,7 +162,7 @@ async function loading_song() {
                     left.style.width = "100vw";
                     menu_btn.style.display = "none";
                 }
-            });
+            };
         }
     }
 }
@@ -176,25 +189,23 @@ async function updateSongBaar(sNumber) {
 }
 
 function playNextSong() {
-    song_baar.value = 0;
+    if (song_baar) song_baar.value = 0;
     if (current_song >= song_name.length - 1) { playSong(0); }
     else { playSong(current_song + 1); }
 }
 
 function playLastSong() {
-    song_baar.value = 0;
+    if (song_baar) song_baar.value = 0;
     if (current_song <= 0) { playSong(song_name.length - 1); }
     else { playSong(current_song - 1); }
 }
 
 async function uptadeseekbaar(sNumber) {
     if (songs_address[sNumber]) {
-        songs_address[sNumber].onended = () => {
-            playNextSong();
-        };
+        songs_address[sNumber].onended = () => playNextSong();
         songs_address[sNumber].addEventListener("timeupdate", () => {
             csong_duratin = songs_address[sNumber].duration;
-            if (csong_duratin) {
+            if (csong_duratin && song_baar) {
                 song_baar.value = (songs_address[sNumber].currentTime * 100) / csong_duratin;
             }
         });
@@ -207,16 +218,10 @@ async function play_this_song(songNumber) {
     if (play_now_text[songNumber]) play_now_text[songNumber].innerHTML = "Playing...";
     
     current_song = songNumber;
-    songs_address[songNumber].play().catch(e => console.log("Audio Play Blocked:", e));
+    songs_address[songNumber].play().catch(e => console.log("Playback error:", e));
     play = 1;
 
     await upadating_song_count(current_folder);
-    if (window.innerWidth <= 800) {
-        right.style.display = "block";
-        left.style.display = "none";
-        right.style.width = "100vw";
-        menu_btn.style.display = "block";
-    }
 }
 
 async function playSong(songNumber) {
@@ -251,71 +256,85 @@ async function check_song() {
     }
 }
 
-vol_img.addEventListener("click", () => {
-    if (current_song === -1) return;
-    if (isMute == 1) {
-        vol_img.src = unmute_img;
-        songs_address[current_song].volume = 1;
-        isMute = 0;
-    } else {
-        vol_img.src = mute_img;
-        songs_address[current_song].volume = 0;
-        isMute = 1;
-    }
-});
+if (vol_img) {
+    vol_img.addEventListener("click", () => {
+        if (current_song === -1) return;
+        if (isMute == 1) {
+            vol_img.src = unmute_img;
+            songs_address[current_song].volume = 1;
+            isMute = 0;
+        } else {
+            vol_img.src = mute_img;
+            songs_address[current_song].volume = 0;
+            isMute = 1;
+        }
+    });
+}
 
-center_play_img.addEventListener("click", () => {
-    if (current_song === -1) return;
-    if (play == 1) {
-        songs_address[current_song].pause();
-        center_play_img.src = play_btn_img;
-        if (song_play_img[current_song]) song_play_img[current_song].src = play_btn_img;
-        play = 0;
-    } else {
-        songs_address[current_song].play().catch(e => console.log(e));
-        center_play_img.src = pause_btn_img;
-        if (song_play_img[current_song]) song_play_img[current_song].src = pause_btn_img;
-        play = 1;
-    }
-});
+if (center_play_img) {
+    center_play_img.addEventListener("click", () => {
+        if (current_song === -1) return;
+        if (play == 1) {
+            songs_address[current_song].pause();
+            center_play_img.src = play_btn_img;
+            if (song_play_img[current_song]) song_play_img[current_song].src = play_btn_img;
+            play = 0;
+        } else {
+            songs_address[current_song].play().catch(e => console.log(e));
+            center_play_img.src = pause_btn_img;
+            if (song_play_img[current_song]) song_play_img[current_song].src = pause_btn_img;
+            play = 1;
+        }
+    });
+}
 
-volume_baar.addEventListener("input", () => {
-    if (current_song !== -1 && songs_address[current_song]) {
-        songs_address[current_song].volume = volume_baar.value / 100;
-    }
-});
+if (volume_baar) {
+    volume_baar.addEventListener("input", () => {
+        if (current_song !== -1 && songs_address[current_song]) {
+            songs_address[current_song].volume = volume_baar.value / 100;
+        }
+    });
+}
 
-song_baar.addEventListener("input", () => {
-    if (current_song !== -1 && csong_duratin && songs_address[current_song]) {
-        songs_address[current_song].currentTime = (song_baar.value * csong_duratin) / 100;
-    }
-});
+if (song_baar) {
+    song_baar.addEventListener("input", () => {
+        if (current_song !== -1 && csong_duratin && songs_address[current_song]) {
+            songs_address[current_song].currentTime = (song_baar.value * csong_duratin) / 100;
+        }
+    });
+}
 
-play_next.addEventListener("click", () => playNextSong());
-play_last.addEventListener("click", () => playLastSong());
+if (play_next) play_next.addEventListener("click", () => playNextSong());
+if (play_last) play_last.addEventListener("click", () => playLastSong());
 
-close_btn.addEventListener("click", () => {
-    left.style.display = "none";
-    right.style.width = "100vw";
-    menu_btn.style.display = "block";
-});
+if (close_btn) {
+    close_btn.addEventListener("click", () => {
+        left.style.display = "none";
+        right.style.width = "100vw";
+        menu_btn.style.display = "block";
+    });
+}
 
-home_btn.addEventListener("click", () => {
-    left.style.display = "none";
-    right.style.width = "100vw";
-    menu_btn.style.display = "block";
-});
+if (home_btn) {
+    home_btn.addEventListener("click", () => {
+        left.style.display = "none";
+        right.style.width = "100vw";
+        menu_btn.style.display = "block";
+    });
+}
 
-menu_btn.addEventListener("click", () => {
-    if (window.innerWidth > 800) {
-        left.style.display = "block";
-        left.style.width = "350px";
-        right.style.width = "calc(100vw - 350px)";
-        menu_btn.style.display = "none";
-    } else {
-        left.style.width = "100vw";
-        right.style.display = "none";
-        left.style.display = "block";
-        close_btn.style.display = "block";
-    }
-});
+if (menu_btn) {
+    menu_btn.addEventListener("click", () => {
+        if (window.innerWidth > 800) {
+            left.style.display = "block";
+            left.style.width = "350px";
+            right.style.width = "calc(100vw - 350px)";
+            menu_btn.style.display = "none";
+        } else {
+            left.style.width = "100vw";
+            right.style.display = "none";
+            left.style.display = "block";
+            close_btn.style.display = "block";
+        }
+    });
+}
