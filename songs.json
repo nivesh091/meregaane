@@ -1,0 +1,21 @@
+{
+  "playlists": [
+    {
+      "name": "Kishore Kumar",
+      "folderPath": "songs/Kishore_Kumar",
+      "songs": [
+        "song1.mp3",
+        "song2.mp3",
+        "song3.mp3"
+      ]
+    },
+    {
+      "name": "Arijit Singh",
+      "folderPath": "songs/Arijit_Singh",
+      "songs": [
+        "kesariya.mp3",
+        "tum_hi_ho.mp3"
+      ]
+    }
+  ]
+}
