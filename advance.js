@@ -53,7 +53,9 @@ let isMute = 0;
 async function upadating_song_count(number) {
     let folder_lenght = song_name.length;
     song_count.innerHTML = (current_song + 1) + "/" + folder_lenght;
-    folder_update.innerHTML = playlists_name[number];
+    if (playlists_name[number]) {
+        folder_update.innerHTML = playlists_name[number];
+    }
 }
 
 (async function () {
@@ -100,14 +102,13 @@ function pauseAllSong() {
 }
 
 async function getting_songs(number) {
-    current_song = 0;
+    current_folder = number; // Shuru me hi folder index update karein
     song_baar.value = 0;
     pauseAllSong();
     
     song_name.length = 0;
     songs_address.length = 0;
     current_song = -1;
-    current_folder = -1;
     folder_songs_list.innerHTML = "";
 
     let folderPath = playlists_address[number];
@@ -145,7 +146,6 @@ async function getting_songs(number) {
         }
     }
     check_song();
-    current_folder = number;
 }
 
 function loading_song() {
