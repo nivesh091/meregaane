@@ -37,7 +37,7 @@ let isMute = 0;
 
 async function upadating_song_count(number) {
     let folder_lenght = song_name.length;
-    if (song_count) song_count.innerHTML = (current_song + 1) + "/" + folder_lenght;
+    if (song_count && current_song >= 0) song_count.innerHTML = (current_song + 1) + "/" + folder_lenght;
     if (folder_update && playlists_name[number]) folder_update.innerHTML = playlists_name[number];
 }
 
@@ -57,8 +57,7 @@ async function upadating_song_count(number) {
             }
         }
     } catch (err) {
-        console.warn("GitHub API Unavailable. Fallback mode activated:", err);
-        // Fallback folders if GitHub API hits rate limit
+        console.warn("GitHub API Limit Hit. Fallback mode activated:", err);
         let fallbackFolders = ["Kishore_Kumar", "Arijit_Singh", "Sad_Songs"]; 
         playlists_name = [];
         playlists_address = [];
@@ -91,7 +90,7 @@ async function pauseAllSong() {
         if (play_now_text[s]) play_now_text[s].innerHTML = "Play Now";
         if (songs_address[s]) {
             songs_address[s].pause();
-            if (s != current_song) { songs_address[s].currentTime = 0; }
+            if (s !== current_song) { songs_address[s].currentTime = 0; }
         }
     }
 }
@@ -168,7 +167,7 @@ async function loading_song() {
 }
 
 async function updateSongBaar(sNumber) {
-    if (part_1) part_1.innerHTML = song_name[sNumber];
+    if (part_1 && song_name[sNumber]) part_1.innerHTML = song_name[sNumber];
     if (songs_address[current_song]) {
         songs_address[current_song].ontimeupdate = () => {
             let ctime = Math.floor(songs_address[current_song].currentTime || 0);
@@ -189,12 +188,14 @@ async function updateSongBaar(sNumber) {
 }
 
 function playNextSong() {
+    if (song_name.length === 0) return;
     if (song_baar) song_baar.value = 0;
     if (current_song >= song_name.length - 1) { playSong(0); }
     else { playSong(current_song + 1); }
 }
 
 function playLastSong() {
+    if (song_name.length === 0) return;
     if (song_baar) song_baar.value = 0;
     if (current_song <= 0) { playSong(song_name.length - 1); }
     else { playSong(current_song - 1); }
@@ -218,8 +219,10 @@ async function play_this_song(songNumber) {
     if (play_now_text[songNumber]) play_now_text[songNumber].innerHTML = "Playing...";
     
     current_song = songNumber;
-    songs_address[songNumber].play().catch(e => console.log("Playback error:", e));
-    play = 1;
+    if (songs_address[songNumber]) {
+        songs_address[songNumber].play().catch(e => console.log("Playback error:", e));
+        play = 1;
+    }
 
     await upadating_song_count(current_folder);
 }
@@ -242,7 +245,7 @@ async function check_song() {
             song_play_img[i].onclick = (e) => {
                 e.stopPropagation();
                 if (play == 1 && current_song == i) {
-                    songs_address[current_song].pause();
+                    if (songs_address[current_song]) songs_address[current_song].pause();
                     play_now_text[i].innerHTML = "Play Now";
                     song_play_img[i].src = play_btn_img;
                     center_play_img.src = play_btn_img;
@@ -258,7 +261,7 @@ async function check_song() {
 
 if (vol_img) {
     vol_img.addEventListener("click", () => {
-        if (current_song === -1) return;
+        if (current_song === -1 || !songs_address[current_song]) return;
         if (isMute == 1) {
             vol_img.src = unmute_img;
             songs_address[current_song].volume = 1;
@@ -273,7 +276,7 @@ if (vol_img) {
 
 if (center_play_img) {
     center_play_img.addEventListener("click", () => {
-        if (current_song === -1) return;
+        if (current_song === -1 || !songs_address[current_song]) return;
         if (play == 1) {
             songs_address[current_song].pause();
             center_play_img.src = play_btn_img;
@@ -296,10 +299,13 @@ if (volume_baar) {
     });
 }
 
+// Fixed: Added safety check for valid song before setting currentTime
 if (song_baar) {
     song_baar.addEventListener("input", () => {
-        if (current_song !== -1 && csong_duratin && songs_address[current_song]) {
+        if (current_song !== -1 && songs_address[current_song] && csong_duratin) {
             songs_address[current_song].currentTime = (song_baar.value * csong_duratin) / 100;
+        } else {
+            song_baar.value = 0; // Reset seek bar if no song active
         }
     });
 }
