@@ -58,6 +58,8 @@ async function upadating_song_count(number) {
 }
 
 (async function () {
+    // Purana: fetch("/songs/") <-- Iski wajah se 404 aa raha hai
+    // Naya GitHub API Fetch:
     let repoApiUrl = "https://api.github.io/repos/nivesh091/meregaane/contents/songs";
     let res = await fetch(repoApiUrl);
     let files = await res.json();
@@ -141,197 +143,197 @@ async function getting_songs(number) {
     current_folder = number;
 } // <-- Ye wala closing bracket miss tha
 
-    async function loading_song() {
-        for (let i = 0; i < playlists_name.length; i++) {
-            await folders[i].addEventListener(("click"), () => {
-                if (i != current_folder) { getting_songs(i); }
-                if (window.innerWidth > 800) {
-                    left.style.display = "block";
-                    left.style.width = "350px";
-                    right.style.width = "calc(100vw - 350px)";
-                    menu_btn.style.display = "none";
-                } else {
-                    right.style.display = "none";
-                    left.style.display = "block";
-                    left.style.width = "100vw";
-                    menu_btn.style.display = "none";
-                }
-            })
-        }
-    }
-
-    async function updateSongBaar(sNumber) {
-        part_1.innerHTML = song_name[sNumber];
-        songs_address[current_song].addEventListener("timeupdate", () => {
-            ctime = Math.floor(songs_address[current_song].currentTime);
-            current_time = ctime;
-            cmin = Math.floor(ctime / 60);
-            csec = ctime - cmin * 60;
-            if (cmin < 10) { cmin = "0" + cmin }
-            if (csec < 10) { csec = "0" + csec }
-            ttime = Math.floor(songs_address[current_song].duration);
-            tmin = Math.floor(ttime / 60);
-            tsec = ttime - tmin * 60;
-            if (tmin < 10) { tmin = "0" + tmin }
-            if (tsec < 10) { tsec = "0" + tsec }
-            time.innerHTML = cmin + ":" + csec + "/" + tmin + ":" + tsec;
-        })
-    }
-
-    function playNextSong() {
-        song_baar.value = 0;
-        if (current_song == song_name.length - 1) { playSong(0); }
-        else { playSong(current_song + 1) }
-    }
-
-    function playLastSong() {
-        if (current_song == -1 || current_song == 0) { playSong(0) }
-        song_baar.value = 0;
-        if (current_song == 0) { playSong(song_name.length - 1); }
-        else { playSong(current_song - 1) }
-    }
-
-
-    async function uptadeseekbaar(sNumber) {
-        csong_duratin = songs_address[sNumber].duration
-        songs_address[current_song].addEventListener(("timeupdate"), () => {
-            song_baar.value = (current_time * 100) / csong_duratin;
-            if (song_baar.value == 100) {
-                playNextSong();
+async function loading_song() {
+    for (let i = 0; i < playlists_name.length; i++) {
+        await folders[i].addEventListener(("click"), () => {
+            if (i != current_folder) { getting_songs(i); }
+            if (window.innerWidth > 800) {
+                left.style.display = "block";
+                left.style.width = "350px";
+                right.style.width = "calc(100vw - 350px)";
+                menu_btn.style.display = "none";
+            } else {
+                right.style.display = "none";
+                left.style.display = "block";
+                left.style.width = "100vw";
+                menu_btn.style.display = "none";
             }
         })
     }
+}
 
-    async function play_this_song(songNumber) {
-        songs_player[songNumber].style.border = "1px solid white";
-        play_or_pause[songNumber].src = "pause_btn.png";
-        play_now_text[songNumber].innerHTML = "Playing...";
-        songs_address[songNumber].play();
+async function updateSongBaar(sNumber) {
+    part_1.innerHTML = song_name[sNumber];
+    songs_address[current_song].addEventListener("timeupdate", () => {
+        ctime = Math.floor(songs_address[current_song].currentTime);
+        current_time = ctime;
+        cmin = Math.floor(ctime / 60);
+        csec = ctime - cmin * 60;
+        if (cmin < 10) { cmin = "0" + cmin }
+        if (csec < 10) { csec = "0" + csec }
+        ttime = Math.floor(songs_address[current_song].duration);
+        tmin = Math.floor(ttime / 60);
+        tsec = ttime - tmin * 60;
+        if (tmin < 10) { tmin = "0" + tmin }
+        if (tsec < 10) { tsec = "0" + tsec }
+        time.innerHTML = cmin + ":" + csec + "/" + tmin + ":" + tsec;
+    })
+}
+
+function playNextSong() {
+    song_baar.value = 0;
+    if (current_song == song_name.length - 1) { playSong(0); }
+    else { playSong(current_song + 1) }
+}
+
+function playLastSong() {
+    if (current_song == -1 || current_song == 0) { playSong(0) }
+    song_baar.value = 0;
+    if (current_song == 0) { playSong(song_name.length - 1); }
+    else { playSong(current_song - 1) }
+}
+
+
+async function uptadeseekbaar(sNumber) {
+    csong_duratin = songs_address[sNumber].duration
+    songs_address[current_song].addEventListener(("timeupdate"), () => {
+        song_baar.value = (current_time * 100) / csong_duratin;
+        if (song_baar.value == 100) {
+            playNextSong();
+        }
+    })
+}
+
+async function play_this_song(songNumber) {
+    songs_player[songNumber].style.border = "1px solid white";
+    play_or_pause[songNumber].src = "pause_btn.png";
+    play_now_text[songNumber].innerHTML = "Playing...";
+    songs_address[songNumber].play();
+    play = 1;
+    current_song = songNumber;
+    await upadating_song_count(current_folder);
+    if (window.innerWidth <= 800) {
+        right.style.display = "block";
+        left.style.display = "none";
+        right.style.width = "100vw";
+        menu_btn.style.display = "block";
+    }
+}
+
+async function playSong(songNumber) {
+    await pauseAllSong();
+    await play_this_song(songNumber);
+    await updateSongBaar(songNumber);
+    await uptadeseekbaar(songNumber);
+}
+async function check_song() {
+    for (let i = 0; i < song_name.length; i++) {
+        await songs_player[i].addEventListener(("click"), () => {
+            if (current_song != i) { playSong(i); }
+        })
+    }
+    for (let x = 0; x < song_play_img.length; x++) {
+        song_play_img[x].addEventListener(("click"), () => {
+            if (play == 1) {
+                songs_address[current_song].pause();
+                play_now_text[x].innerHTML = "Play Now";
+                song_play_img[x].src = play_btn_img;
+                center_play_img.src = play_btn_img;
+                play = 0;
+            } else {
+                songs_address[current_song].play();
+                play_now_text[x].innerHTML = "Playing...";
+                song_play_img[x].src = pause_btn_img;
+                center_play_img.src = pause_btn_img;
+                play = 1;
+            }
+        })
+    }
+}
+
+vol_img.addEventListener(("click"), () => {
+    if (isMute == 1) {
+        vol_img.src = unmute_img
+        songs_address[current_song].volume = 1;
+        isMute = 0;
+    }
+    else {
+        vol_img.src = mute_img
+        songs_address[current_song].volume = 0;
+        isMute = 1;
+    }
+})
+
+center_play_img.addEventListener(("click"), () => {
+    if (play == 1) {
+        songs_address[current_song].pause();
+        center_play_img.src = play_btn_img;
+        song_play_img[current_song].src = play_btn_img;
+        play = 0;
+    } else {
+        songs_address[current_song].play();
+        center_play_img.src = pause_btn_img;
+        song_play_img[current_song].src = pause_btn_img;
         play = 1;
-        current_song = songNumber;
-        await upadating_song_count(current_folder);
-        if (window.innerWidth <= 800) {
-            right.style.display = "block";
-            left.style.display = "none";
-            right.style.width = "100vw";
-            menu_btn.style.display = "block";
-        }
     }
+})
 
-    async function playSong(songNumber) {
-        await pauseAllSong();
-        await play_this_song(songNumber);
-        await updateSongBaar(songNumber);
-        await uptadeseekbaar(songNumber);
-    }
-    async function check_song() {
-        for (let i = 0; i < song_name.length; i++) {
-            await songs_player[i].addEventListener(("click"), () => {
-                if (current_song != i) { playSong(i); }
-            })
-        }
-        for (let x = 0; x < song_play_img.length; x++) {
-            song_play_img[x].addEventListener(("click"), () => {
-                if (play == 1) {
-                    songs_address[current_song].pause();
-                    play_now_text[x].innerHTML = "Play Now";
-                    song_play_img[x].src = play_btn_img;
-                    center_play_img.src = play_btn_img;
-                    play = 0;
-                } else {
-                    songs_address[current_song].play();
-                    play_now_text[x].innerHTML = "Playing...";
-                    song_play_img[x].src = pause_btn_img;
-                    center_play_img.src = pause_btn_img;
-                    play = 1;
-                }
-            })
-        }
-    }
+volume_baar.addEventListener(("input"), () => {
+    songs_address[current_song].volume = volume_baar.value / 100;
+    current_volume = volume_baar.value / 100;
+});
 
-    vol_img.addEventListener(("click"), () => {
-        if (isMute == 1) {
-            vol_img.src = unmute_img
-            songs_address[current_song].volume = 1;
-            isMute = 0;
-        }
-        else {
-            vol_img.src = mute_img
-            songs_address[current_song].volume = 0;
-            isMute = 1;
-        }
-    })
+song_baar.addEventListener(("input"), () => {
+    current_time = song_baar.value
+    songs_address[current_song].currentTime = (current_time * csong_duratin) / 100;
+})
 
-    center_play_img.addEventListener(("click"), () => {
-        if (play == 1) {
-            songs_address[current_song].pause();
-            center_play_img.src = play_btn_img;
-            song_play_img[current_song].src = play_btn_img;
-            play = 0;
-        } else {
-            songs_address[current_song].play();
-            center_play_img.src = pause_btn_img;
-            song_play_img[current_song].src = pause_btn_img;
-            play = 1;
-        }
-    })
+play_next.addEventListener(("click"), () => {
+    playNextSong();
+})
 
-    volume_baar.addEventListener(("input"), () => {
-        songs_address[current_song].volume = volume_baar.value / 100;
-        current_volume = volume_baar.value / 100;
-    });
+play_last.addEventListener(("click"), () => {
+    playLastSong();
+})
 
-    song_baar.addEventListener(("input"), () => {
-        current_time = song_baar.value
-        songs_address[current_song].currentTime = (current_time * csong_duratin) / 100;
-    })
-
-    play_next.addEventListener(("click"), () => {
-        playNextSong();
-    })
-
-    play_last.addEventListener(("click"), () => {
-        playLastSong();
-    })
-
-    close_btn.addEventListener("click", () => {
+close_btn.addEventListener("click", () => {
+    left.style.display = "none";
+    right.style.width = "100vw";
+    menu_btn.style.display = "block";
+    if (window.innerWidth <= 800) {
+        right.style.display = "block";
         left.style.display = "none";
         right.style.width = "100vw";
         menu_btn.style.display = "block";
-        if (window.innerWidth <= 800) {
-            right.style.display = "block";
-            left.style.display = "none";
-            right.style.width = "100vw";
-            menu_btn.style.display = "block";
-        }
-    })
-    home_btn.addEventListener("click", () => {
+    }
+})
+home_btn.addEventListener("click", () => {
+    left.style.display = "none";
+    right.style.width = "100vw";
+    menu_btn.style.display = "block";
+    if (window.innerWidth <= 800) {
+        right.style.display = "block";
         left.style.display = "none";
         right.style.width = "100vw";
         menu_btn.style.display = "block";
-        if (window.innerWidth <= 800) {
-            right.style.display = "block";
-            left.style.display = "none";
-            right.style.width = "100vw";
-            menu_btn.style.display = "block";
-        }
-    })
-    menu_btn.addEventListener("click", () => {
-        if (window.innerWidth > 800) {
-            left.style.display = "block";
-            left.style.width = "350px";
-            right.style.width = "calc(100vw - 350px)";
-            menu_btn.style.display = "none";
-        }
-        else {
-            left.style.width = "100vw";
-            right.style.display = "none";
-            left.style.display = "block";
-            close_btn.style.display = "block";
-        }
-    })
+    }
+})
+menu_btn.addEventListener("click", () => {
+    if (window.innerWidth > 800) {
+        left.style.display = "block";
+        left.style.width = "350px";
+        right.style.width = "calc(100vw - 350px)";
+        menu_btn.style.display = "none";
+    }
+    else {
+        left.style.width = "100vw";
+        right.style.display = "none";
+        left.style.display = "block";
+        close_btn.style.display = "block";
+    }
+})
 
-    document.body.addEventListener("click", function enterFullscreen() {
-        document.documentElement.requestFullscreen();
-        document.body.removeEventListener("click", enterFullscreen);
-    });
+document.body.addEventListener("click", function enterFullscreen() {
+    document.documentElement.requestFullscreen();
+    document.body.removeEventListener("click", enterFullscreen);
+});
