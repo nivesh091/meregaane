@@ -146,7 +146,13 @@ body {
 }
 
 .part_1 {
-    justify-content: left;
+    font-size: 14px;
+    width: 33.33%;
+    height: 35px;
+    overflow: hidden;
+    overflow-y: hidden;
+    display: flex;
+    justify-content: center;
 }
 
 .left {
@@ -445,8 +451,7 @@ body {
 }
 
 .part_3,
-.part_2,
-.part_1 {
+.part_2,{
     font-size: 14px;
     width: 33.33%;
     height: 35px;
@@ -501,10 +506,6 @@ body {
 
 .part_2 {
     width: 26%;
-}
-
-.part_1 {
-    width: 37%;
 }
 
 .part_3 {
@@ -622,8 +623,7 @@ body {
     }
 
     .part_3,
-    .part_2,
-    .part_1 {
+    .part_2{
         width: calc(100% - 2px);
     }
 
