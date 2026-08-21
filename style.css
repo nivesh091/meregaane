@@ -437,7 +437,7 @@ body {
 .items {
     flex-wrap: wrap;
     opacity: 88%;
-    margin-top: 15px;
+    margin-top: 10px;
     display: flex;
     margin-left: 5%;
     width: 90%;
@@ -472,7 +472,7 @@ body {
 .song_baar {
     border: 1px solid white;
     position: absolute;
-    bottom: 20px;
+    bottom: 15px;
     margin-left: 5%;
     width: 90%;
     height: 5px;
@@ -632,14 +632,13 @@ body {
     }
 
     .part_1 {
-        height: 44px;
+        height: 35px;
         width: 100%;
         text-align: center;
     }
 
     .part_2 {
         gap: 30px !important;
-        margin-top: 4px;
     }
 
     .arrow {
@@ -702,8 +701,7 @@ body {
 
     .part_3 {
         justify-content: center;
-        /* gap: 35px; */
-        margin-top: 3px;
+        gap: 35px;
     }
 
     .left_bottum ul {
