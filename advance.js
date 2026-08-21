@@ -58,27 +58,25 @@ async function upadating_song_count(number) {
 }
 
 (async function () {
-    let location = window.location.origin;
-    let res = await fetch("/songs/");
-    let resp = await res.text();
-    let div = document.createElement("div");
-    div.innerHTML = resp;
-    let data = div.getElementsByTagName("a");
+    let res = await fetch("https://api.github.com/repos/nivesh091/meregaane/contents/songs");
+    let data = await res.json();
+
     for (let i = 0; i < data.length; i++) {
-        let href = await data[i].href
-        if (href.startsWith(location + "/songs") && href != location + "/songs") {
-            playlists_address.push(href)
-            let dup = href.replace(location + "/songs/", "")
-            dup = dup.replaceAll("%20", " ");
-            playlists_name.push(dup)
+        if (data[i].type === "dir") {
+            let folderName = data[i].name;
+            playlists_address.push(data[i].url);
+            playlists_name.push(folderName);
+
+            let cleanName = folderName.replaceAll("_", " ");
+
             folder_list.innerHTML +=
                 `<div class="folders pointer">
                     <div class="playlist_image_frame"></div>
                     <div class="card_text">
-                        <div class="card_text_1"><b>${dup}</b></div>
+                        <div class="card_text_1"><b>${cleanName}</b></div>
                         <div class="card_text_2">Nivesh</div>
                     </div>
-                </div>`
+                </div>`;
         }
     }
     await loading_song();
