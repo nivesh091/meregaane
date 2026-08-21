@@ -48,6 +48,16 @@ let ctime = 0;
 let cmin = 0;
 let csec = 0;
 let isMute = 0;
+// Variable definitions ke theek niche paste karein
+function formatTime(seconds) {
+    if (isNaN(seconds) || seconds <= 0) return "00:00";
+    let mins = Math.floor(seconds / 60);
+    let secs = Math.floor(seconds % 60);
+    if (mins < 10) mins = "0" + mins;
+    if (secs < 10) secs = "0" + secs;
+    return `${mins}:${secs}`;
+}
+
 
 async function upadating_song_count(number) {
     // let folder_lenght = await song_name.length;
@@ -167,26 +177,31 @@ function uptadeseekbaar(sNumber) {
     let audio = songs_address[sNumber];
     if (!audio) return;
 
-    // Timeupdate event tab chalta hai jab song play ho raha hota hai
     audio.ontimeupdate = () => {
         let currentTime = audio.currentTime;
-        let duration = audio.duration; // Dynamic duration yahan live milegi
+        let duration = audio.duration;
 
-        // 1. Time display update (Agar aapke paas time class vala element hai)
-        if (time && !isNaN(duration)) {
+        // Time display update
+        if (time && duration && !isNaN(duration)) {
             time.innerHTML = `${formatTime(currentTime)} / ${formatTime(duration)}`;
         }
 
-        // 2. Seekbar slider update (0 se 100 ke beech)
+        // Seekbar line update (0-100)
         if (song_baar && duration && !isNaN(duration) && duration > 0) {
             song_baar.value = (currentTime / duration) * 100;
         }
 
-        // 3. Gaana khatam hone par automatic next song
+        // Gaana finish hone par auto-next
         if (duration > 0 && currentTime >= duration) {
             playNextSong();
         }
     };
+}
+
+async function playSong(songNumber) {
+    await pauseAllSong();
+    await play_this_song(songNumber);
+    uptadeseekbaar(songNumber);
 }
 
 function playNextSong() {
@@ -292,10 +307,14 @@ volume_baar.addEventListener(("input"), () => {
     current_volume = volume_baar.value / 100;
 });
 
-song_baar.addEventListener(("input"), () => {
-    current_time = song_baar.value
-    songs_address[current_song].currentTime = (current_time * csong_duratin) / 100;
-})
+song_baar.addEventListener("input", () => {
+    if (current_song !== -1 && songs_address[current_song]) {
+        let duration = songs_address[current_song].duration;
+        if (duration && !isNaN(duration)) {
+            songs_address[current_song].currentTime = (song_baar.value * duration) / 100;
+        }
+    }
+});
 
 play_next.addEventListener(("click"), () => {
     playNextSong();
