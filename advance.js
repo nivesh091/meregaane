@@ -40,7 +40,7 @@ let song_name = [];
 let play = 0;
 let isMute = 0;
 
-// Helper function for time display
+// Helper: Formats seconds to MM:SS
 function formatTime(seconds) {
     if (isNaN(seconds) || seconds <= 0) return "00:00";
     let mins = Math.floor(seconds / 60);
@@ -162,6 +162,7 @@ async function loading_song() {
     }
 }
 
+// FIX 1 & 2: Clean single implementation for seekbar updates
 function uptadeseekbaar(sNumber) {
     let audio = songs_address[sNumber];
     if (!audio) return;
@@ -170,21 +171,31 @@ function uptadeseekbaar(sNumber) {
         let currentTime = audio.currentTime;
         let duration = audio.duration;
 
-        // Time text display update
         if (time && duration && !isNaN(duration)) {
             time.innerHTML = `${formatTime(currentTime)} / ${formatTime(duration)}`;
         }
 
-        // Seekbar line progress update (0 - 100)
         if (song_baar && duration && !isNaN(duration) && duration > 0) {
             song_baar.value = (currentTime / duration) * 100;
         }
 
-        // Auto next song on complete
         if (duration > 0 && currentTime >= duration) {
             playNextSong();
         }
     };
+}
+
+function playNextSong() {
+    song_baar.value = 0;
+    if (current_song == song_name.length - 1) { playSong(0); }
+    else { playSong(current_song + 1); }
+}
+
+function playLastSong() {
+    if (current_song == -1 || current_song == 0) { playSong(0); }
+    song_baar.value = 0;
+    if (current_song == 0) { playSong(song_name.length - 1); }
+    else { playSong(current_song - 1); }
 }
 
 async function play_this_song(songNumber) {
@@ -203,23 +214,11 @@ async function play_this_song(songNumber) {
     }
 }
 
+// FIX 3: Removed invalid `updateSongBaar(songNumber)` reference
 async function playSong(songNumber) {
     await pauseAllSong();
     await play_this_song(songNumber);
     uptadeseekbaar(songNumber);
-}
-
-function playNextSong() {
-    song_baar.value = 0;
-    if (current_song == song_name.length - 1) { playSong(0); }
-    else { playSong(current_song + 1); }
-}
-
-function playLastSong() {
-    if (current_song == -1 || current_song == 0) { playSong(0); }
-    song_baar.value = 0;
-    if (current_song == 0) { playSong(song_name.length - 1); }
-    else { playSong(current_song - 1); }
 }
 
 async function check_song() {
@@ -279,6 +278,7 @@ volume_baar.addEventListener("input", () => {
     }
 });
 
+// FIX 4: Corrected seek action to change current playing position
 song_baar.addEventListener("input", () => {
     if (current_song !== -1 && songs_address[current_song]) {
         let duration = songs_address[current_song].duration;
