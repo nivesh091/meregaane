@@ -704,6 +704,7 @@ body {
     .part_3 {
         justify-content: center;
         gap: 50px;
+        margin-top: -4px;
     }
 
     .left_bottum ul {
