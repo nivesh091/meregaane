@@ -162,7 +162,7 @@ async function loading_song() {
     }
 }
 
-// FIX 1 & 2: Clean single implementation for seekbar updates
+// Fixed Seekbar & Timer Update Function
 function uptadeseekbaar(sNumber) {
     let audio = songs_address[sNumber];
     if (!audio) return;
@@ -214,7 +214,7 @@ async function play_this_song(songNumber) {
     }
 }
 
-// FIX 3: Removed invalid `updateSongBaar(songNumber)` reference
+// Fixed playSong Function
 async function playSong(songNumber) {
     await pauseAllSong();
     await play_this_song(songNumber);
@@ -278,7 +278,7 @@ volume_baar.addEventListener("input", () => {
     }
 });
 
-// FIX 4: Corrected seek action to change current playing position
+// Fixed Drag/Seek feature
 song_baar.addEventListener("input", () => {
     if (current_song !== -1 && songs_address[current_song]) {
         let duration = songs_address[current_song].duration;
