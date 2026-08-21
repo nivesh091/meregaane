@@ -40,7 +40,6 @@ let song_name = [];
 let play = 0;
 let isMute = 0;
 
-// Helper: Formats seconds to MM:SS
 function formatTime(seconds) {
     if (isNaN(seconds) || seconds <= 0) return "00:00";
     let mins = Math.floor(seconds / 60);
@@ -52,8 +51,8 @@ function formatTime(seconds) {
 
 async function upadating_song_count(number) {
     let folder_lenght = song_name.length;
-    song_count.innerHTML = (current_song + 1) + "/" + folder_lenght;
-    folder_update.innerHTML = playlists_name[number];
+    if (song_count) song_count.innerHTML = (current_song + 1) + "/" + folder_lenght;
+    if (folder_update) folder_update.innerHTML = playlists_name[number];
 }
 
 (async function () {
@@ -98,7 +97,7 @@ async function pauseAllSong() {
 
 async function getting_songs(number) {
     current_song = 0;
-    song_baar.value = 0;
+    if (song_baar) song_baar.value = 0;
     await pauseAllSong();
 
     song_name.length = 0;
@@ -162,20 +161,23 @@ async function loading_song() {
     }
 }
 
-// Fixed Seekbar & Timer Update Function
+// Fixed Seekbar Tracker Logic
 function uptadeseekbaar(sNumber) {
     let audio = songs_address[sNumber];
     if (!audio) return;
+
+    // Remove older listeners if any to avoid stacking
+    audio.ontimeupdate = null;
 
     audio.ontimeupdate = () => {
         let currentTime = audio.currentTime;
         let duration = audio.duration;
 
-        if (time && duration && !isNaN(duration)) {
+        if (time && !isNaN(duration) && duration > 0) {
             time.innerHTML = `${formatTime(currentTime)} / ${formatTime(duration)}`;
         }
 
-        if (song_baar && duration && !isNaN(duration) && duration > 0) {
+        if (song_baar && !isNaN(duration) && duration > 0) {
             song_baar.value = (currentTime / duration) * 100;
         }
 
@@ -186,14 +188,14 @@ function uptadeseekbaar(sNumber) {
 }
 
 function playNextSong() {
-    song_baar.value = 0;
+    if (song_baar) song_baar.value = 0;
     if (current_song == song_name.length - 1) { playSong(0); }
     else { playSong(current_song + 1); }
 }
 
 function playLastSong() {
     if (current_song == -1 || current_song == 0) { playSong(0); }
-    song_baar.value = 0;
+    if (song_baar) song_baar.value = 0;
     if (current_song == 0) { playSong(song_name.length - 1); }
     else { playSong(current_song - 1); }
 }
@@ -214,7 +216,6 @@ async function play_this_song(songNumber) {
     }
 }
 
-// Fixed playSong Function
 async function playSong(songNumber) {
     await pauseAllSong();
     await play_this_song(songNumber);
@@ -246,93 +247,102 @@ async function check_song() {
     }
 }
 
-vol_img.addEventListener("click", () => {
-    if (isMute == 1) {
-        vol_img.src = unmute_img;
-        songs_address[current_song].volume = 1;
-        isMute = 0;
-    } else {
-        vol_img.src = mute_img;
-        songs_address[current_song].volume = 0;
-        isMute = 1;
-    }
-});
-
-center_play_img.addEventListener("click", () => {
-    if (play == 1) {
-        songs_address[current_song].pause();
-        center_play_img.src = play_btn_img;
-        song_play_img[current_song].src = play_btn_img;
-        play = 0;
-    } else {
-        songs_address[current_song].play();
-        center_play_img.src = pause_btn_img;
-        song_play_img[current_song].src = pause_btn_img;
-        play = 1;
-    }
-});
-
-volume_baar.addEventListener("input", () => {
-    if (current_song !== -1 && songs_address[current_song]) {
-        songs_address[current_song].volume = volume_baar.value / 100;
-    }
-});
-
-// Fixed Drag/Seek feature
-song_baar.addEventListener("input", () => {
-    if (current_song !== -1 && songs_address[current_song]) {
-        let duration = songs_address[current_song].duration;
-        if (duration && !isNaN(duration)) {
-            songs_address[current_song].currentTime = (song_baar.value * duration) / 100;
+if (vol_img) {
+    vol_img.addEventListener("click", () => {
+        if (isMute == 1) {
+            vol_img.src = unmute_img;
+            songs_address[current_song].volume = 1;
+            isMute = 0;
+        } else {
+            vol_img.src = mute_img;
+            songs_address[current_song].volume = 0;
+            isMute = 1;
         }
-    }
-});
+    });
+}
 
-play_next.addEventListener("click", () => {
-    playNextSong();
-});
+if (center_play_img) {
+    center_play_img.addEventListener("click", () => {
+        if (play == 1) {
+            songs_address[current_song].pause();
+            center_play_img.src = play_btn_img;
+            if (song_play_img[current_song]) song_play_img[current_song].src = play_btn_img;
+            play = 0;
+        } else {
+            songs_address[current_song].play();
+            center_play_img.src = pause_btn_img;
+            if (song_play_img[current_song]) song_play_img[current_song].src = pause_btn_img;
+            play = 1;
+        }
+    });
+}
 
-play_last.addEventListener("click", () => {
-    playLastSong();
-});
+if (volume_baar) {
+    volume_baar.addEventListener("input", () => {
+        if (current_song !== -1 && songs_address[current_song]) {
+            songs_address[current_song].volume = volume_baar.value / 100;
+        }
+    });
+}
 
-close_btn.addEventListener("click", () => {
-    left.style.display = "none";
-    right.style.width = "100vw";
-    menu_btn.style.display = "block";
-    if (window.innerWidth <= 800) {
-        right.style.display = "block";
+// User Seekbar Drag Event
+if (song_baar) {
+    song_baar.addEventListener("input", () => {
+        if (current_song !== -1 && songs_address[current_song]) {
+            let duration = songs_address[current_song].duration;
+            if (duration && !isNaN(duration)) {
+                songs_address[current_song].currentTime = (song_baar.value * duration) / 100;
+            }
+        }
+    });
+}
+
+if (play_next) play_next.addEventListener("click", () => playNextSong());
+if (play_last) play_last.addEventListener("click", () => playLastSong());
+
+if (close_btn) {
+    close_btn.addEventListener("click", () => {
         left.style.display = "none";
         right.style.width = "100vw";
         menu_btn.style.display = "block";
-    }
-});
+        if (window.innerWidth <= 800) {
+            right.style.display = "block";
+            left.style.display = "none";
+            right.style.width = "100vw";
+            menu_btn.style.display = "block";
+        }
+    });
+}
 
-home_btn.addEventListener("click", () => {
-    left.style.display = "none";
-    right.style.width = "100vw";
-    menu_btn.style.display = "block";
-    if (window.innerWidth <= 800) {
-        right.style.display = "block";
+if (home_btn) {
+    home_btn.addEventListener("click", () => {
         left.style.display = "none";
         right.style.width = "100vw";
         menu_btn.style.display = "block";
-    }
-});
+        if (window.innerWidth <= 800) {
+            right.style.display = "block";
+            left.style.display = "none";
+            right.style.width = "100vw";
+            menu_btn.style.display = "block";
+        }
+    });
+}
 
-menu_btn.addEventListener("click", () => {
-    if (window.innerWidth > 800) {
-        left.style.display = "block";
-        left.style.width = "350px";
-        right.style.width = "calc(100vw - 350px)";
-        menu_btn.style.display = "none";
-    } else {
-        left.style.width = "100vw";
-        right.style.display = "none";
-        left.style.display = "block";
-        close_btn.style.display = "block";
-    }
-});
+if (menu_btn) {
+    menu_btn.addEventListener("click", () => {
+        if (window.innerWidth > 800) {
+            left.style.display = "block";
+            left.style.width = "350px";
+            right.style.width = "calc(100vw - 350px)";
+            menu_btn.style.display = "none";
+        } else {
+            left.style.width = "100vw";
+            right.style.display = "none";
+            left.style.display = "block";
+            close_btn.style.display = "block";
+        }
+    });
+}
 
 document.body.addEventListener("click", function enterFullscreen() {
     document.documentElement.requestFullscreen();
