@@ -163,19 +163,29 @@ async function loading_song() {
     }
 }
 
-async function uptadeseekbaar(sNumber) {
-    songs_address[sNumber].addEventListener("loadedmetadata", () => {
-        csong_duratin = songs_address[sNumber].duration;
-    });
+function uptadeseekbaar(sNumber) {
+    let audio = songs_address[sNumber];
+    if (!audio) return;
 
-    songs_address[current_song].addEventListener("timeupdate", () => {
-        if (csong_duratin) {
-            song_baar.value = (songs_address[current_song].currentTime * 100) / csong_duratin;
+    audio.ontimeupdate = () => {
+        let duration = audio.duration;
+        let currentTime = audio.currentTime;
+
+        // 1. Time display update karne ke liye
+        if (time) {
+            time.innerHTML = `${formatTime(currentTime)} / ${formatTime(duration)}`;
         }
-        if (song_baar.value == 100) {
+
+        // 2. Seekbar slider ko aage badhane ke liye
+        if (song_baar && duration) {
+            song_baar.value = (currentTime / duration) * 100;
+        }
+
+        // 3. Gaana khatam hone par next song ke liye
+        if (duration > 0 && currentTime >= duration) {
             playNextSong();
         }
-    });
+    };
 }
 
 function playNextSong() {
