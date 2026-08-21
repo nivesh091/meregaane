@@ -84,12 +84,16 @@ async function upadating_song_count(number) {
 
 async function pauseAllSong() {
     play = 0;
-    for (let s = 0; s < song_name.length; s++) {
-        songs_player[s].style.border = "1px solid rgb(49 49 42)";
-        play_or_pause[s].src = "play_btn_1.png";
-        play_now_text[s].innerHTML = "Play Now";
-        songs_address[s].pause();
-        if (s != current_song) { songs_address[s].currentTime = 0; }
+    for (let s = 0; s < songs_address.length; s++) {
+        if (songs_player[s]) {
+            songs_player[s].style.border = "1px solid rgb(49 49 42)";
+            play_or_pause[s].src = "play_btn_1.png";
+            play_now_text[s].innerHTML = "Play Now";
+        }
+        if (songs_address[s]) {
+            songs_address[s].pause();
+            if (s != current_song) { songs_address[s].currentTime = 0; }
+        }
     }
 }
 
@@ -159,22 +163,19 @@ async function loading_song() {
     }
 }
 
-async function updateSongBaar(sNumber) {
-    part_1.innerHTML = song_name[sNumber];
+async function uptadeseekbaar(sNumber) {
+    songs_address[sNumber].addEventListener("loadedmetadata", () => {
+        csong_duratin = songs_address[sNumber].duration;
+    });
+
     songs_address[current_song].addEventListener("timeupdate", () => {
-        ctime = Math.floor(songs_address[current_song].currentTime);
-        current_time = ctime;
-        cmin = Math.floor(ctime / 60);
-        csec = ctime - cmin * 60;
-        if (cmin < 10) { cmin = "0" + cmin }
-        if (csec < 10) { csec = "0" + csec }
-        ttime = Math.floor(songs_address[current_song].duration);
-        tmin = Math.floor(ttime / 60);
-        tsec = ttime - tmin * 60;
-        if (tmin < 10) { tmin = "0" + tmin }
-        if (tsec < 10) { tsec = "0" + tsec }
-        time.innerHTML = cmin + ":" + csec + "/" + tmin + ":" + tsec;
-    })
+        if (csong_duratin) {
+            song_baar.value = (songs_address[current_song].currentTime * 100) / csong_duratin;
+        }
+        if (song_baar.value == 100) {
+            playNextSong();
+        }
+    });
 }
 
 function playNextSong() {
