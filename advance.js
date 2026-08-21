@@ -96,36 +96,33 @@ async function pauseAllSong() {
 async function getting_songs(number) {
     current_song = 0;
     song_baar.value = 0;
-    pauseAllSong();
-    let x = song_name.length;
+    await pauseAllSong();
+
     song_name.length = 0;
     songs_address.length = 0;
     current_song = -1;
     current_folder = -1;
     folder_songs_list.innerHTML = "";
-    // let res = await fetch(playlists_address[number] + "/");
+
     let res = await fetch(playlists_address[number]);
-    let resp = await res.text();
-    let div = document.createElement("div");
-    div.innerHTML = resp;
-    let data = div.getElementsByTagName("a");
-    for (let i = 0; i < data.length; i++) {
-        let href = data[i].href;
-        if (href.endsWith(".mp3")) {
-            let new_audios = new Audio(href);
+    let files = await res.json();
+
+    for (let i = 0; i < files.length; i++) {
+        if (files[i].name.endsWith(".mp3")) {
+            let audioUrl = files[i].download_url;
+            let new_audios = new Audio(audioUrl);
             songs_address.push(new_audios);
-            let nm = decodeURI(href);
-            nm = nm.replace(decodeURI(playlists_address[number]) + "/", "");
-            nm = nm.replaceAll("_", " ");
-            nm = nm.replaceAll("  ", " ");
-            nm = nm.replaceAll("(MP3 160K)", "");
-            nm = nm + ("...");
+
+            let nm = files[i].name.replaceAll("_", " ")
+                                  .replaceAll("(MP3 160K)", "")
+                                  .replace(".mp3", "") + "...";
             song_name.push(nm);
+
             folder_songs_list.innerHTML +=
                 `<div class="songs pointer">
                     <div class="song_list_left">
                         <div class="song_img"><img class="mini_images_2" src="mp3_song.png" alt=""></div>
-                        <div class="center_left ">
+                        <div class="center_left">
                             <div class="song_name">
                                 <p>${nm}</p>
                             </div>
@@ -133,12 +130,10 @@ async function getting_songs(number) {
                         </div>
                     </div>
                     <div class="play_left">
-                        <div class="play_left_text">
-                            Play Now
-                        </div>
+                        <div class="play_left_text">Play Now</div>
                         <img class="mini_images_3 song_play_img play_or_pause invert" src="play_btn_1.png" alt="">
                     </div>
-                </div>`
+                </div>`;
         }
     }
     await check_song();
