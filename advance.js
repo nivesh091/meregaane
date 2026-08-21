@@ -23,9 +23,6 @@ let part_1 = document.getElementsByClassName("part_1")[0];
 let play_next = document.getElementsByClassName("play_next")[0];
 let play_last = document.getElementsByClassName("play_last")[0];
 
-// FIX 1: Playbar Song Title selector add kar diya
-let myname = document.getElementsByClassName("myname")[0];
-
 let folder_image = "Kishore_Kumar.jpg";
 let unmute_img = "unmute_img.png";
 let mute_img = "mute_img.png";
@@ -42,6 +39,14 @@ let songs_address = [];
 let song_name = [];
 let play = 0;
 let isMute = 0;
+
+// Helper function to safely update playbar text dynamically
+function updatePlaybarName(name) {
+    let myname = document.getElementsByClassName("myname")[0];
+    if (myname) {
+        myname.innerText = name;
+    }
+}
 
 function formatTime(seconds) {
     if (isNaN(seconds) || seconds <= 0) return "00:00";
@@ -164,7 +169,7 @@ async function loading_song() {
     }
 }
 
-// Fixed Seekbar Tracker Logic
+// Seekbar Tracker Logic
 function uptadeseekbaar(sNumber) {
     let audio = songs_address[sNumber];
     if (!audio) return;
@@ -207,15 +212,16 @@ async function play_this_song(songNumber) {
     play_or_pause[songNumber].src = "pause_btn.png";
     play_now_text[songNumber].innerHTML = "Playing...";
 
-    // FIX 2: Dynamic song name bottom playbar par set hoga
-    if (myname) {
-        myname.innerHTML = song_name[songNumber];
-    }
+    // FIX 1: Playbar text update inside play_this_song
+    updatePlaybarName(song_name[songNumber]);
+
+    if (center_play_img) center_play_img.src = pause_btn_img;
 
     songs_address[songNumber].play();
     play = 1;
     current_song = songNumber;
     await upadating_song_count(current_folder);
+    
     if (window.innerWidth <= 800) {
         right.style.display = "block";
         left.style.display = "none";
@@ -230,26 +236,28 @@ async function playSong(songNumber) {
     uptadeseekbaar(songNumber);
 }
 
+// FIX 2: Fixed event handling in check_song function
 async function check_song() {
     for (let i = 0; i < song_name.length; i++) {
-        await songs_player[i].addEventListener(("click"), () => {
-            if (current_song != i) { playSong(i); }
-        });
-    }
-    for (let x = 0; x < song_play_img.length; x++) {
-        song_play_img[x].addEventListener(("click"), () => {
-            if (play == 1) {
-                songs_address[current_song].pause();
-                play_now_text[x].innerHTML = "Play Now";
-                song_play_img[x].src = play_btn_img;
-                center_play_img.src = play_btn_img;
-                play = 0;
+        songs_player[i].addEventListener("click", (e) => {
+            // Prevent event conflict if clicking play button directly
+            if (current_song !== i) { 
+                playSong(i); 
             } else {
-                songs_address[current_song].play();
-                play_now_text[x].innerHTML = "Playing...";
-                song_play_img[x].src = pause_btn_img;
-                center_play_img.src = pause_btn_img;
-                play = 1;
+                if (play === 1) {
+                    songs_address[current_song].pause();
+                    play_now_text[i].innerHTML = "Play Now";
+                    song_play_img[i].src = play_btn_img;
+                    if (center_play_img) center_play_img.src = play_btn_img;
+                    play = 0;
+                } else {
+                    songs_address[current_song].play();
+                    play_now_text[i].innerHTML = "Playing...";
+                    song_play_img[i].src = pause_btn_img;
+                    if (center_play_img) center_play_img.src = pause_btn_img;
+                    updatePlaybarName(song_name[i]);
+                    play = 1;
+                }
             }
         });
     }
@@ -257,6 +265,7 @@ async function check_song() {
 
 if (vol_img) {
     vol_img.addEventListener("click", () => {
+        if (current_song === -1) return;
         if (isMute == 1) {
             vol_img.src = unmute_img;
             songs_address[current_song].volume = 1;
@@ -269,17 +278,27 @@ if (vol_img) {
     });
 }
 
+// FIX 3: Bottom Playbar Center Button Click Handling
 if (center_play_img) {
     center_play_img.addEventListener("click", () => {
+        if (current_song === -1 && song_name.length > 0) {
+            playSong(0);
+            return;
+        }
+        if (current_song === -1) return;
+
         if (play == 1) {
             songs_address[current_song].pause();
             center_play_img.src = play_btn_img;
             if (song_play_img[current_song]) song_play_img[current_song].src = play_btn_img;
+            if (play_now_text[current_song]) play_now_text[current_song].innerHTML = "Play Now";
             play = 0;
         } else {
             songs_address[current_song].play();
             center_play_img.src = pause_btn_img;
             if (song_play_img[current_song]) song_play_img[current_song].src = pause_btn_img;
+            if (play_now_text[current_song]) play_now_text[current_song].innerHTML = "Playing...";
+            updatePlaybarName(song_name[current_song]);
             play = 1;
         }
     });
