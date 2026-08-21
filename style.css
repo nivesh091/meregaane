@@ -449,7 +449,7 @@ body {
 .part_1 {
     font-size: 14px;
     width: 33.33%;
-    height: 35px;
+    height: 40px;
     overflow: hidden;
     overflow-y: hidden;
     display: flex;
@@ -632,7 +632,7 @@ body {
     }
 
     .part_1 {
-        height: 35px;
+        height: 40px;
         width: 100%;
         text-align: center;
     }
