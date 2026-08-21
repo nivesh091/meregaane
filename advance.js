@@ -40,9 +40,9 @@ let song_name = [];
 let play = 0;
 let isMute = 0;
 
-// Helper function to safely update playbar text dynamically
+// Helper function to safely update playbar text dynamically directly via DOM
 function updatePlaybarName(name) {
-    let myname = document.getElementsByClassName("myname")[0];
+    let myname = document.querySelector(".myname");
     if (myname) {
         myname.innerText = name;
     }
@@ -60,32 +60,36 @@ function formatTime(seconds) {
 async function upadating_song_count(number) {
     let folder_lenght = song_name.length;
     if (song_count) song_count.innerHTML = (current_song + 1) + "/" + folder_lenght;
-    if (folder_update) folder_update.innerHTML = playlists_name[number];
+    if (folder_update && playlists_name[number]) folder_update.innerHTML = playlists_name[number];
 }
 
 (async function () {
-    let res = await fetch("https://api.github.com/repos/nivesh091/meregaane/contents/songs");
-    let data = await res.json();
+    try {
+        let res = await fetch("https://api.github.com/repos/nivesh091/meregaane/contents/songs");
+        let data = await res.json();
 
-    for (let i = 0; i < data.length; i++) {
-        if (data[i].type === "dir") {
-            let folderName = data[i].name;
-            playlists_address.push(data[i].url);
-            playlists_name.push(folderName);
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].type === "dir") {
+                let folderName = data[i].name;
+                playlists_address.push(data[i].url);
+                playlists_name.push(folderName);
 
-            let cleanName = folderName.replaceAll("_", " ");
+                let cleanName = folderName.replaceAll("_", " ");
 
-            folder_list.innerHTML +=
-                `<div class="folders pointer">
-                    <div class="playlist_image_frame"></div>
-                    <div class="card_text">
-                        <div class="card_text_1"><b>${cleanName}</b></div>
-                        <div class="card_text_2">Nivesh</div>
-                    </div>
-                </div>`;
+                folder_list.innerHTML +=
+                    `<div class="folders pointer">
+                        <div class="playlist_image_frame"></div>
+                        <div class="card_text">
+                            <div class="card_text_1"><b>${cleanName}</b></div>
+                            <div class="card_text_2">Nivesh</div>
+                        </div>
+                    </div>`;
+            }
         }
+        await loading_song();
+    } catch (e) {
+        console.error("Error fetching playlists:", e);
     }
-    await loading_song();
 })();
 
 async function pauseAllSong() {
@@ -93,79 +97,94 @@ async function pauseAllSong() {
     for (let s = 0; s < songs_address.length; s++) {
         if (songs_player[s]) {
             songs_player[s].style.border = "1px solid rgb(49 49 42)";
-            play_or_pause[s].src = "play_btn_1.png";
+        }
+        if (play_or_pause[s]) {
+            play_or_pause[s].src = play_btn_img;
+        }
+        if (play_now_text[s]) {
             play_now_text[s].innerHTML = "Play Now";
         }
         if (songs_address[s]) {
             songs_address[s].pause();
-            if (s != current_song) { songs_address[s].currentTime = 0; }
+            if (s !== current_song) { 
+                songs_address[s].currentTime = 0; 
+            }
         }
     }
 }
 
 async function getting_songs(number) {
-    current_song = 0;
     if (song_baar) song_baar.value = 0;
     await pauseAllSong();
 
     song_name.length = 0;
     songs_address.length = 0;
     current_song = -1;
-    current_folder = -1;
     folder_songs_list.innerHTML = "";
 
-    let res = await fetch(playlists_address[number]);
-    let files = await res.json();
+    try {
+        let res = await fetch(playlists_address[number]);
+        let files = await res.json();
 
-    for (let i = 0; i < files.length; i++) {
-        if (files[i].name.endsWith(".mp3")) {
-            let audioUrl = files[i].download_url;
-            let new_audios = new Audio(audioUrl);
-            songs_address.push(new_audios);
+        for (let i = 0; i < files.length; i++) {
+            if (files[i].name.endsWith(".mp3")) {
+                let audioUrl = files[i].download_url;
+                let new_audios = new Audio(audioUrl);
+                songs_address.push(new_audios);
 
-            let nm = files[i].name.replaceAll("_", " ")
-                                  .replaceAll("(MP3 160K)", "")
-                                  .replace(".mp3", "") + "...";
-            song_name.push(nm);
+                let nm = files[i].name.replaceAll("_", " ")
+                                      .replaceAll("(MP3 160K)", "")
+                                      .replace(".mp3", "") + "...";
+                song_name.push(nm);
 
-            folder_songs_list.innerHTML +=
-                `<div class="songs pointer">
-                    <div class="song_list_left">
-                        <div class="song_img"><img class="mini_images_2" src="mp3_song.png" alt=""></div>
-                        <div class="center_left">
-                            <div class="song_name">
-                                <p>${nm}</p>
+                folder_songs_list.innerHTML +=
+                    `<div class="songs pointer">
+                        <div class="song_list_left">
+                            <div class="song_img"><img class="mini_images_2" src="mp3_song.png" alt=""></div>
+                            <div class="center_left">
+                                <div class="song_name">
+                                    <p>${nm}</p>
+                                </div>
+                                <div class="name">Nivesh</div>
                             </div>
-                            <div class="name">Nivesh</div>
                         </div>
-                    </div>
-                    <div class="play_left">
-                        <div class="play_left_text">Play Now</div>
-                        <img class="mini_images_3 song_play_img play_or_pause invert" src="play_btn_1.png" alt="">
-                    </div>
-                </div>`;
+                        <div class="play_left">
+                            <div class="play_left_text">Play Now</div>
+                            <img class="mini_images_3 song_play_img play_or_pause invert" src="play_btn_1.png" alt="">
+                        </div>
+                    </div>`;
+            }
         }
+        await check_song();
+        current_folder = number;
+        
+        // Default select first song name in playbar when playlist loads
+        if (song_name.length > 0) {
+            updatePlaybarName(song_name[0]);
+        }
+    } catch (e) {
+        console.error("Error loading songs from playlist:", e);
     }
-    await check_song();
-    current_folder = number;
 }
 
 async function loading_song() {
     for (let i = 0; i < playlists_name.length; i++) {
-        await folders[i].addEventListener(("click"), () => {
-            if (i != current_folder) { getting_songs(i); }
-            if (window.innerWidth > 800) {
-                left.style.display = "block";
-                left.style.width = "350px";
-                right.style.width = "calc(100vw - 350px)";
-                menu_btn.style.display = "none";
-            } else {
-                right.style.display = "none";
-                left.style.display = "block";
-                left.style.width = "100vw";
-                menu_btn.style.display = "none";
-            }
-        });
+        if (folders[i]) {
+            folders[i].addEventListener("click", () => {
+                if (i !== current_folder) { getting_songs(i); }
+                if (window.innerWidth > 800) {
+                    left.style.display = "block";
+                    left.style.width = "350px";
+                    right.style.width = "calc(100vw - 350px)";
+                    menu_btn.style.display = "none";
+                } else {
+                    right.style.display = "none";
+                    left.style.display = "block";
+                    left.style.width = "100vw";
+                    menu_btn.style.display = "none";
+                }
+            });
+        }
     }
 }
 
@@ -195,24 +214,35 @@ function uptadeseekbaar(sNumber) {
 }
 
 function playNextSong() {
+    if (song_name.length === 0) return;
     if (song_baar) song_baar.value = 0;
-    if (current_song == song_name.length - 1) { playSong(0); }
-    else { playSong(current_song + 1); }
+    if (current_song === song_name.length - 1 || current_song === -1) { 
+        playSong(0); 
+    } else { 
+        playSong(current_song + 1); 
+    }
 }
 
 function playLastSong() {
-    if (current_song == -1 || current_song == 0) { playSong(0); }
+    if (song_name.length === 0) return;
     if (song_baar) song_baar.value = 0;
-    if (current_song == 0) { playSong(song_name.length - 1); }
-    else { playSong(current_song - 1); }
+    
+    // FIX 1: Proper previous song navigation
+    if (current_song <= 0) { 
+        playSong(song_name.length - 1); 
+    } else { 
+        playSong(current_song - 1); 
+    }
 }
 
 async function play_this_song(songNumber) {
-    songs_player[songNumber].style.border = "1px solid white";
-    play_or_pause[songNumber].src = "pause_btn.png";
-    play_now_text[songNumber].innerHTML = "Playing...";
+    if (!songs_address[songNumber]) return;
 
-    // FIX 1: Playbar text update inside play_this_song
+    if (songs_player[songNumber]) songs_player[songNumber].style.border = "1px solid white";
+    if (play_or_pause[songNumber]) play_or_pause[songNumber].src = pause_btn_img;
+    if (play_now_text[songNumber]) play_now_text[songNumber].innerHTML = "Playing...";
+
+    // Playbar UI update
     updatePlaybarName(song_name[songNumber]);
 
     if (center_play_img) center_play_img.src = pause_btn_img;
@@ -221,7 +251,7 @@ async function play_this_song(songNumber) {
     play = 1;
     current_song = songNumber;
     await upadating_song_count(current_folder);
-    
+
     if (window.innerWidth <= 800) {
         right.style.display = "block";
         left.style.display = "none";
@@ -236,37 +266,37 @@ async function playSong(songNumber) {
     uptadeseekbaar(songNumber);
 }
 
-// FIX 2: Fixed event handling in check_song function
 async function check_song() {
     for (let i = 0; i < song_name.length; i++) {
-        songs_player[i].addEventListener("click", (e) => {
-            // Prevent event conflict if clicking play button directly
-            if (current_song !== i) { 
-                playSong(i); 
-            } else {
-                if (play === 1) {
-                    songs_address[current_song].pause();
-                    play_now_text[i].innerHTML = "Play Now";
-                    song_play_img[i].src = play_btn_img;
-                    if (center_play_img) center_play_img.src = play_btn_img;
-                    play = 0;
+        if (songs_player[i]) {
+            songs_player[i].onclick = (e) => {
+                if (current_song !== i) { 
+                    playSong(i); 
                 } else {
-                    songs_address[current_song].play();
-                    play_now_text[i].innerHTML = "Playing...";
-                    song_play_img[i].src = pause_btn_img;
-                    if (center_play_img) center_play_img.src = pause_btn_img;
-                    updatePlaybarName(song_name[i]);
-                    play = 1;
+                    if (play === 1) {
+                        songs_address[current_song].pause();
+                        if (play_now_text[i]) play_now_text[i].innerHTML = "Play Now";
+                        if (song_play_img[i]) song_play_img[i].src = play_btn_img;
+                        if (center_play_img) center_play_img.src = play_btn_img;
+                        play = 0;
+                    } else {
+                        songs_address[current_song].play();
+                        if (play_now_text[i]) play_now_text[i].innerHTML = "Playing...";
+                        if (song_play_img[i]) song_play_img[i].src = pause_btn_img;
+                        if (center_play_img) center_play_img.src = pause_btn_img;
+                        updatePlaybarName(song_name[i]);
+                        play = 1;
+                    }
                 }
-            }
-        });
+            };
+        }
     }
 }
 
 if (vol_img) {
     vol_img.addEventListener("click", () => {
-        if (current_song === -1) return;
-        if (isMute == 1) {
+        if (current_song === -1 || !songs_address[current_song]) return;
+        if (isMute === 1) {
             vol_img.src = unmute_img;
             songs_address[current_song].volume = 1;
             isMute = 0;
@@ -278,16 +308,16 @@ if (vol_img) {
     });
 }
 
-// FIX 3: Bottom Playbar Center Button Click Handling
+// Bottom Playbar Center Button Click Handling
 if (center_play_img) {
     center_play_img.addEventListener("click", () => {
         if (current_song === -1 && song_name.length > 0) {
             playSong(0);
             return;
         }
-        if (current_song === -1) return;
+        if (current_song === -1 || !songs_address[current_song]) return;
 
-        if (play == 1) {
+        if (play === 1) {
             songs_address[current_song].pause();
             center_play_img.src = play_btn_img;
             if (song_play_img[current_song]) song_play_img[current_song].src = play_btn_img;
@@ -371,6 +401,8 @@ if (menu_btn) {
 }
 
 document.body.addEventListener("click", function enterFullscreen() {
-    document.documentElement.requestFullscreen();
+    if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
+    }
     document.body.removeEventListener("click", enterFullscreen);
 });
