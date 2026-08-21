@@ -632,9 +632,10 @@ body {
     }
 
     .part_1 {
-        height: 34px;
+        height: 40px;
         width: 100%;
         text-align: center;
+        margin-top: -10px;
     }
 
     .part_2 {
@@ -691,7 +692,7 @@ body {
     .play_baar {
         position: fixed;
         left: auto;
-        height: 200px;
+        height: 180px !important;
         bottom: 10px;
     }
 
