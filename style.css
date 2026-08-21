@@ -638,6 +638,7 @@ body {
 
     .part_2 {
         gap: 30px !important;
+        margin-top: 6px;
     }
 
     .arrow {
