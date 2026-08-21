@@ -40,23 +40,6 @@ let song_name = [];
 let play = 0;
 let isMute = 0;
 
-const menuBtn = document.querySelector(".menu_btn");
-const closeBtn = document.querySelector(".close_btn");
-const leftSidebar = document.querySelector(".left");
-
-// Hamburger Menu click karne par sidebar show karein
-if (menuBtn) {
-    menuBtn.addEventListener("click", () => {
-        leftSidebar.classList.add("left_open");
-    });
-}
-
-// Close (X) button click karne par sidebar hide karein
-if (closeBtn) {
-    closeBtn.addEventListener("click", () => {
-        leftSidebar.classList.remove("left_open");
-    });
-}
 
 // Helper function to safely update playbar text dynamically directly via DOM
 function updatePlaybarName(name) {
