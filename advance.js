@@ -23,6 +23,9 @@ let part_1 = document.getElementsByClassName("part_1")[0];
 let play_next = document.getElementsByClassName("play_next")[0];
 let play_last = document.getElementsByClassName("play_last")[0];
 
+// FIX 1: Playbar Song Title selector add kar diya
+let myname = document.getElementsByClassName("myname")[0];
+
 let folder_image = "Kishore_Kumar.jpg";
 let unmute_img = "unmute_img.png";
 let mute_img = "mute_img.png";
@@ -166,7 +169,6 @@ function uptadeseekbaar(sNumber) {
     let audio = songs_address[sNumber];
     if (!audio) return;
 
-    // Remove older listeners if any to avoid stacking
     audio.ontimeupdate = null;
 
     audio.ontimeupdate = () => {
@@ -204,6 +206,12 @@ async function play_this_song(songNumber) {
     songs_player[songNumber].style.border = "1px solid white";
     play_or_pause[songNumber].src = "pause_btn.png";
     play_now_text[songNumber].innerHTML = "Playing...";
+
+    // FIX 2: Dynamic song name bottom playbar par set hoga
+    if (myname) {
+        myname.innerHTML = song_name[songNumber];
+    }
+
     songs_address[songNumber].play();
     play = 1;
     current_song = songNumber;
@@ -285,7 +293,6 @@ if (volume_baar) {
     });
 }
 
-// User Seekbar Drag Event
 if (song_baar) {
     song_baar.addEventListener("input", () => {
         if (current_song !== -1 && songs_address[current_song]) {
