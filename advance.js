@@ -167,21 +167,22 @@ function uptadeseekbaar(sNumber) {
     let audio = songs_address[sNumber];
     if (!audio) return;
 
+    // Timeupdate event tab chalta hai jab song play ho raha hota hai
     audio.ontimeupdate = () => {
-        let duration = audio.duration;
         let currentTime = audio.currentTime;
+        let duration = audio.duration; // Dynamic duration yahan live milegi
 
-        // 1. Time display update karne ke liye
-        if (time) {
+        // 1. Time display update (Agar aapke paas time class vala element hai)
+        if (time && !isNaN(duration)) {
             time.innerHTML = `${formatTime(currentTime)} / ${formatTime(duration)}`;
         }
 
-        // 2. Seekbar slider ko aage badhane ke liye
-        if (song_baar && duration) {
+        // 2. Seekbar slider update (0 se 100 ke beech)
+        if (song_baar && duration && !isNaN(duration) && duration > 0) {
             song_baar.value = (currentTime / duration) * 100;
         }
 
-        // 3. Gaana khatam hone par next song ke liye
+        // 3. Gaana khatam hone par automatic next song
         if (duration > 0 && currentTime >= duration) {
             playNextSong();
         }
