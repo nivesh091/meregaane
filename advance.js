@@ -108,29 +108,73 @@ async function pauseAllSong() {
     }
 }
 
+// async function getting_songs(number) {
+//     song_baar.value = 0;
+//     await pauseAllSong();
+
+//     song_name = [];
+//     songs_address = [];
+//     current_song = -1;
+//     current_folder = number;
+//     folder_songs_list.innerHTML = "";
+
+//     let playlist = songsData.playlists[number];
+
+//     playlist.songs.forEach((file) => {
+//         let audioUrl = `${playlist.folderPath}/${file}`;
+//         let new_audios = new Audio(audioUrl);
+//         songs_address.push(new_audios);
+
+//         let nm = file.replaceAll("_", " ")
+//                      .replaceAll("(MP3 160K)", "")
+//                      .replace(".mp3", "") + "...";
+//         song_name.push(nm);
+
+//         folder_songs_list.innerHTML +=
+//             `<div class="songs pointer">
+//                 <div class="song_list_left">
+//                     <div class="song_img"><img class="mini_images_2" src="mp3_song.png" alt=""></div>
+//                     <div class="center_left">
+//                         <div class="song_name">
+//                             <p>${nm}</p>
+//                         </div>
+//                         <div class="name">Nivesh</div>
+//                     </div>
+//                 </div>
+//                 <div class="play_left">
+//                     <div class="play_left_text">Play Now</div>
+//                     <img class="mini_images_3 song_play_img play_or_pause invert" src="play_btn_1.png" alt="">
+//                 </div>
+//             </div>`;
+//     });
+
+//     await check_song();
+// }
 async function getting_songs(number) {
     song_baar.value = 0;
     await pauseAllSong();
 
     song_name = [];
-    songs_address = [];
+    songs_address = []; // Ab isme audio objects nahi, sirf URLs store honge
     current_song = -1;
     current_folder = number;
-    folder_songs_list.innerHTML = "";
 
     let playlist = songsData.playlists[number];
+    let listHTML = ""; // DOM operations batch karne ke liye string buffer
 
     playlist.songs.forEach((file) => {
-        let audioUrl = `${playlist.folderPath}/${file}`;
-        let new_audios = new Audio(audioUrl);
-        songs_address.push(new_audios);
+        // 1. Path encode karein taaki spaces/special characters par 404 na aaye
+        let audioUrl = encodeURI(`${playlist.folderPath}/${file}`);
+        songs_address.push(audioUrl);
 
+        // 2. Display Name clean karein
         let nm = file.replaceAll("_", " ")
                      .replaceAll("(MP3 160K)", "")
-                     .replace(".mp3", "") + "...";
+                     .replace(".mp3", "").trim();
         song_name.push(nm);
 
-        folder_songs_list.innerHTML +=
+        // 3. HTML string accumulate karein
+        listHTML += 
             `<div class="songs pointer">
                 <div class="song_list_left">
                     <div class="song_img"><img class="mini_images_2" src="mp3_song.png" alt=""></div>
@@ -147,6 +191,9 @@ async function getting_songs(number) {
                 </div>
             </div>`;
     });
+
+    // Sub HTML ek saath inject karein (Fast performance)
+    folder_songs_list.innerHTML = listHTML;
 
     await check_song();
 }
