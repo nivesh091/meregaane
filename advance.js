@@ -1,7 +1,7 @@
 let folder_list = document.getElementsByClassName("folder_list")[0];
 let folder_songs_list = document.getElementsByClassName("folder_songs_list")[0];
 let play_baar = document.getElementsByClassName("play_baar")[0];
-let folders = document.getElementsByClassName("folders")
+let folders = document.getElementsByClassName("folders");
 let song_count = document.getElementsByClassName("song_count")[0];
 let folder_update = document.getElementsByClassName("folder_update")[0];
 let songs_player = document.getElementsByClassName("songs");
@@ -22,33 +22,25 @@ let song_baar = document.getElementsByClassName("song_baar")[0];
 let part_1 = document.getElementsByClassName("part_1")[0];
 let play_next = document.getElementsByClassName("play_next")[0];
 let play_last = document.getElementsByClassName("play_last")[0];
+
 let folder_image = "Kishore_Kumar.jpg";
-let unmute_img = "unmute_img.png"
-let mute_img = "mute_img.png"
+let unmute_img = "unmute_img.png";
+let mute_img = "mute_img.png";
 let folder_sub_title = "Playlist";
 let current_song_name = "nivesh.mp3";
 let pause_btn_img = "pause_btn.png";
-let current_song_live_time = "00:00";
-let current_song_total_time = "00:00";
-let current_volume = 100;
 let play_btn_img = "play_btn_1.png";
+
 let current_song = -1;
 let current_folder = -1;
 let playlists_name = [];
 let playlists_address = [];
 let songs_address = [];
 let song_name = [];
-let current_time = 0;
-let csong_duratin = 0;
 let play = 0;
-let ttime = 0;
-let tmin = 0;
-let tsec = 0;
-let ctime = 0;
-let cmin = 0;
-let csec = 0;
 let isMute = 0;
-// Variable definitions ke theek niche paste karein
+
+// Helper function for time display
 function formatTime(seconds) {
     if (isNaN(seconds) || seconds <= 0) return "00:00";
     let mins = Math.floor(seconds / 60);
@@ -58,10 +50,7 @@ function formatTime(seconds) {
     return `${mins}:${secs}`;
 }
 
-
 async function upadating_song_count(number) {
-    // let folder_lenght = await song_name.length;
-    // song_count.innerHTML = await current_song + 1 + "/" + folder_lenght;
     let folder_lenght = song_name.length;
     song_count.innerHTML = (current_song + 1) + "/" + folder_lenght;
     folder_update.innerHTML = playlists_name[number];
@@ -169,7 +158,7 @@ async function loading_song() {
                 left.style.width = "100vw";
                 menu_btn.style.display = "none";
             }
-        })
+        });
     }
 }
 
@@ -181,51 +170,21 @@ function uptadeseekbaar(sNumber) {
         let currentTime = audio.currentTime;
         let duration = audio.duration;
 
-        // Time display update
+        // Time text display update
         if (time && duration && !isNaN(duration)) {
             time.innerHTML = `${formatTime(currentTime)} / ${formatTime(duration)}`;
         }
 
-        // Seekbar line update (0-100)
+        // Seekbar line progress update (0 - 100)
         if (song_baar && duration && !isNaN(duration) && duration > 0) {
             song_baar.value = (currentTime / duration) * 100;
         }
 
-        // Gaana finish hone par auto-next
+        // Auto next song on complete
         if (duration > 0 && currentTime >= duration) {
             playNextSong();
         }
     };
-}
-
-async function playSong(songNumber) {
-    await pauseAllSong();
-    await play_this_song(songNumber);
-    uptadeseekbaar(songNumber);
-}
-
-function playNextSong() {
-    song_baar.value = 0;
-    if (current_song == song_name.length - 1) { playSong(0); }
-    else { playSong(current_song + 1) }
-}
-
-function playLastSong() {
-    if (current_song == -1 || current_song == 0) { playSong(0) }
-    song_baar.value = 0;
-    if (current_song == 0) { playSong(song_name.length - 1); }
-    else { playSong(current_song - 1) }
-}
-
-
-async function uptadeseekbaar(sNumber) {
-    csong_duratin = songs_address[sNumber].duration
-    songs_address[current_song].addEventListener(("timeupdate"), () => {
-        song_baar.value = (current_time * 100) / csong_duratin;
-        if (song_baar.value == 100) {
-            playNextSong();
-        }
-    })
 }
 
 async function play_this_song(songNumber) {
@@ -247,14 +206,27 @@ async function play_this_song(songNumber) {
 async function playSong(songNumber) {
     await pauseAllSong();
     await play_this_song(songNumber);
-    await updateSongBaar(songNumber);
-    await uptadeseekbaar(songNumber);
+    uptadeseekbaar(songNumber);
 }
+
+function playNextSong() {
+    song_baar.value = 0;
+    if (current_song == song_name.length - 1) { playSong(0); }
+    else { playSong(current_song + 1); }
+}
+
+function playLastSong() {
+    if (current_song == -1 || current_song == 0) { playSong(0); }
+    song_baar.value = 0;
+    if (current_song == 0) { playSong(song_name.length - 1); }
+    else { playSong(current_song - 1); }
+}
+
 async function check_song() {
     for (let i = 0; i < song_name.length; i++) {
         await songs_player[i].addEventListener(("click"), () => {
             if (current_song != i) { playSong(i); }
-        })
+        });
     }
     for (let x = 0; x < song_play_img.length; x++) {
         song_play_img[x].addEventListener(("click"), () => {
@@ -271,24 +243,23 @@ async function check_song() {
                 center_play_img.src = pause_btn_img;
                 play = 1;
             }
-        })
+        });
     }
 }
 
-vol_img.addEventListener(("click"), () => {
+vol_img.addEventListener("click", () => {
     if (isMute == 1) {
-        vol_img.src = unmute_img
+        vol_img.src = unmute_img;
         songs_address[current_song].volume = 1;
         isMute = 0;
-    }
-    else {
-        vol_img.src = mute_img
+    } else {
+        vol_img.src = mute_img;
         songs_address[current_song].volume = 0;
         isMute = 1;
     }
-})
+});
 
-center_play_img.addEventListener(("click"), () => {
+center_play_img.addEventListener("click", () => {
     if (play == 1) {
         songs_address[current_song].pause();
         center_play_img.src = play_btn_img;
@@ -300,11 +271,12 @@ center_play_img.addEventListener(("click"), () => {
         song_play_img[current_song].src = pause_btn_img;
         play = 1;
     }
-})
+});
 
-volume_baar.addEventListener(("input"), () => {
-    songs_address[current_song].volume = volume_baar.value / 100;
-    current_volume = volume_baar.value / 100;
+volume_baar.addEventListener("input", () => {
+    if (current_song !== -1 && songs_address[current_song]) {
+        songs_address[current_song].volume = volume_baar.value / 100;
+    }
 });
 
 song_baar.addEventListener("input", () => {
@@ -316,13 +288,13 @@ song_baar.addEventListener("input", () => {
     }
 });
 
-play_next.addEventListener(("click"), () => {
+play_next.addEventListener("click", () => {
     playNextSong();
-})
+});
 
-play_last.addEventListener(("click"), () => {
+play_last.addEventListener("click", () => {
     playLastSong();
-})
+});
 
 close_btn.addEventListener("click", () => {
     left.style.display = "none";
@@ -334,7 +306,8 @@ close_btn.addEventListener("click", () => {
         right.style.width = "100vw";
         menu_btn.style.display = "block";
     }
-})
+});
+
 home_btn.addEventListener("click", () => {
     left.style.display = "none";
     right.style.width = "100vw";
@@ -345,21 +318,21 @@ home_btn.addEventListener("click", () => {
         right.style.width = "100vw";
         menu_btn.style.display = "block";
     }
-})
+});
+
 menu_btn.addEventListener("click", () => {
     if (window.innerWidth > 800) {
         left.style.display = "block";
         left.style.width = "350px";
         right.style.width = "calc(100vw - 350px)";
         menu_btn.style.display = "none";
-    }
-    else {
+    } else {
         left.style.width = "100vw";
         right.style.display = "none";
         left.style.display = "block";
         close_btn.style.display = "block";
     }
-})
+});
 
 document.body.addEventListener("click", function enterFullscreen() {
     document.documentElement.requestFullscreen();
