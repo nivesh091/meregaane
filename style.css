@@ -118,6 +118,7 @@ body {
 
 .card_text_2 {
     font-size: 14px;
+    margin-top: 7px;
 }
 
 .no_invert {
@@ -563,7 +564,7 @@ body {
     }
 
     .card_text {
-        margin-top: -36px !important;
+        margin-top: -50px !important;
         margin-left: 10px;
     }
 
@@ -703,7 +704,7 @@ body {
 
     .part_3 {
         justify-content: center;
-        gap: 50px;
+        gap: 35px;
         margin-top: -4px;
     }
 
