@@ -618,8 +618,7 @@ body {
 
     .items {
         flex-wrap: wrap;
-        margin-top: 10px;
-        height: 60%;
+        margin-top: 24px;
     }
 
     .part_3,
@@ -633,7 +632,7 @@ body {
     }
 
     .part_1 {
-        height: 40px;
+        height: 34px;
         width: 100%;
         text-align: center;
     }
@@ -692,7 +691,7 @@ body {
     .play_baar {
         position: fixed;
         left: auto;
-        height: 180px !important;
+        height: 170px;
         bottom: 10px;
     }
 
