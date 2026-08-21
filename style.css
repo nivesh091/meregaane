@@ -583,106 +583,63 @@ body {
         height: auto;
     }
 
+    .song_baar {
+        bottom: 20px;
+    }
+
+    /* .playlist_text{
+        top
+    } */
+
     .top {
         padding: 0px 0px 8px 0px;
         margin-top: 0px;
         position: fixed;
-        z-index: 10;
+        z-index: 1;
         top: 5px;
+        position: fixed;
         height: 53px !important;
         width: 96% !important;
         margin-left: 2%;
     }
 
-    .menu_btn, .close_btn {
+    .menu_btn {
+        display: block;
+    }
+
+    .menu_btn {
         display: flex;
     }
 
-    .right {
-        position: absolute;
-        min-width: calc(100vw - 2px);
-        width: calc(100vw - 2px);
-        height: auto;
-        min-height: calc(100vh - 2px);
-        padding-bottom: 170px;
+    .close_btn {
+        display: flex;
     }
 
-    /* --- PLAYBAR MOBILE FIXES START --- */
-    .play_baar {
-        position: fixed;
-        left: 5% !important;
-        width: 90% !important;
-        height: 120px !important;
-        bottom: 10px;
-        z-index: 100;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
-        padding: 8px;
-        box-sizing: border-box;
-    }
 
     .items {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
-        height: 85px;
-        margin-top: 0;
-        margin-left: 0;
+        flex-wrap: wrap;
+        margin-top: 24px;
     }
 
+    .part_3,
+    .part_2,
     .part_1 {
-        width: 100% !important;
-        height: 24px !important;
-        justify-content: center !important;
-        align-items: center;
-        text-align: center;
-        overflow: hidden;
+        width: calc(100% - 2px);
     }
-
-    .myname {
-        margin-left: 0 !important;
-        margin-top: 0 !important;
-        font-size: 13px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 90%;
-        color: #ffffff;
-        font-weight: bold;
-    }
-
-    .part_2 {
-        width: 100% !important;
-        height: 30px !important;
-        justify-content: center !important;
-        gap: 25px !important;
-        margin-top: 2px;
-        align-items: center;
-    }
-
-    .part_3 {
-        width: 100% !important;
-        height: 25px !important;
-        justify-content: center !important;
-        gap: 15px;
-        margin-top: 2px;
-        align-items: center;
-    }
-
-    .song_baar {
-        bottom: 6px;
-        width: 90%;
-        margin-left: 0;
-        left: 5%;
-    }
-    /* --- PLAYBAR MOBILE FIXES END --- */
 
     .your_library {
         padding: 4% 6% 3% 7%;
+    }
+
+    .part_1 {
+        height: 34px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .part_2 {
+        gap: 30px !important;
+        margin-top: 4px;
     }
 
     .arrow {
@@ -705,11 +662,21 @@ body {
     .folders {
         display: flex;
         flex-wrap: wrap;
+        /* margin: auto; */
     }
 
     .folder_songs_list {
         height: auto;
         margin: auto auto 40px 7%;
+    }
+
+    .right {
+        position: absolute;
+        min-width: calc(100vw - 2px);
+        width: calc(100vw - 2px);
+        height: auto;
+        min-height: calc(100vh - 2px);
+        padding-bottom: 170px;
     }
 
     .folder_list {
@@ -721,8 +688,22 @@ body {
         margin-bottom: 10px;
     }
 
+    .play_baar {
+        position: fixed;
+        left: auto;
+        height: 170px;
+        bottom: 10px;
+    }
+
     .card_text {
         margin-top: -8px;
+        ;
+    }
+
+    .part_3 {
+        justify-content: center;
+        /* gap: 35px; */
+        margin-top: 3px;
     }
 
     .left_bottum ul {
