@@ -581,9 +581,24 @@ body {
 
 
 @media (max-width: 800px) {
-    .left {
+    /* .left {
         display: none;
         height: auto;
+    } */
+    .left {
+        /* display: none;  <-- Is line ko hata dein ya comment kar dein */
+        position: fixed;
+        top: 0;
+        left: -350px; /* Sidebar ko screen ke baahar chhipane ke liye */
+        z-index: 1000; /* Baaki content ke upar dikhane ke liye */
+        height: 100vh;
+        width: 320px; /* Ya jitni width aap chahein */
+        transition: left 0.4s ease-in-out; /* Smooth sliding transition */
+    }
+
+    /* 2. Yeh nayi class add karein */
+    .left_open {
+        left: 0 !important; /* Sidebar ko screen par lane ke liye */
     }
 
     .song_baar {
