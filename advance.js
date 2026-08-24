@@ -83,7 +83,10 @@ async function upadating_song_count(number) {
                         </div>
                     </div>`;
             }
+        } catch (error) {
+            console.error(error);
         }
+
         await loading_song();
     }
 })();
@@ -150,7 +153,10 @@ async function getting_songs(number) {
                         </div>
                     </div>`;
             }
+        } catch (error) {
+            console.error(error);
         }
+
         await check_song();
         current_folder = number;
         if (song_name.length > 0) {
