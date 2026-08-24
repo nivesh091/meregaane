@@ -30,7 +30,6 @@ let folder_sub_title = "Playlist";
 let current_song_name = "nivesh.mp3";
 let pause_btn_img = "pause_btn.png";
 let play_btn_img = "play_btn_1.png";
-
 let current_song = -1;
 let current_folder = -1;
 let playlists_name = [];
@@ -41,7 +40,6 @@ let play = 0;
 let isMute = 0;
 
 
-// Helper function to safely update playbar text dynamically directly via DOM
 function updatePlaybarName(name) {
     let myname = document.querySelector(".myname");
     if (myname) {
@@ -64,6 +62,8 @@ async function upadating_song_count(number) {
     if (folder_update && playlists_name[number]) folder_update.innerHTML = playlists_name[number];
 }
 
+
+
 (async function () {
     try {
         let res = await fetch("https://api.github.com/repos/nivesh091/meregaane/contents/songs");
@@ -74,22 +74,18 @@ async function upadating_song_count(number) {
                 let folderName = data[i].name;
                 playlists_address.push(data[i].url);
                 playlists_name.push(folderName);
-
-                let cleanName = folderName.replaceAll("_", " ");
-
+                let newname = folderName.replaceAll("_", " ");
                 folder_list.innerHTML +=
                     `<div class="folders pointer">
                         <div class="playlist_image_frame"></div>
                         <div class="card_text">
-                            <div class="card_text_1"><b>${cleanName}</b></div>
+                            <div class="card_text_1"><b>${newname}</b></div>
                             <div class="card_text_2">Nivesh</div>
                         </div>
                     </div>`;
             }
         }
         await loading_song();
-    } catch (e) {
-        console.error("Error fetching playlists:", e);
     }
 })();
 
@@ -138,7 +134,7 @@ async function getting_songs(number) {
                                       .replace(".mp3", "") + "...";
                 song_name.push(nm);
 
-                folder_songs_list.innerHTML +=
+                .innerHTML +=
                     `<div class="songs pointer">
                         <div class="song_list_left">
                             <div class="song_img"><img class="mini_images_2" src="mp3_song.png" alt=""></div>
@@ -158,59 +154,42 @@ async function getting_songs(number) {
         }
         await check_song();
         current_folder = number;
-        
-        // Default select first song name in playbar when playlist loads
         if (song_name.length > 0) {
             updatePlaybarName(song_name[0]);
         }
-    } catch (e) {
-        console.error("Error loading songs from playlist:", e);
     }
 }
 
 async function loading_song() {
     for (let i = 0; i < playlists_name.length; i++) {
-        if (folders[i]) {
-            folders[i].addEventListener("click", () => {
-                if (i !== current_folder) { getting_songs(i); }
-                if (window.innerWidth > 800) {
-                    left.style.display = "block";
-                    left.style.width = "350px";
-                    right.style.width = "calc(100vw - 350px)";
-                    menu_btn.style.display = "none";
+        folders[i].addEventListener("click", () => {
+            if (i !== current_folder) { getting_songs(i); }
+            if (window.innerWidth > 800) {
+                left.style.display = "block";
+                left.style.width = "350px";
+                right.style.width = "calc(100vw - 350px)";
+                menu_btn.style.display = "none";
                 } else {
-                    right.style.display = "none";
-                    left.style.display = "block";
-                    left.style.width = "100vw";
-                    menu_btn.style.display = "none";
-                }
-            });
-        }
+                right.style.display = "none";
+                 left.style.display = "block";
+                 left.style.width = "100vw";
+                menu_btn.style.display = "none";
+            }
+        });
     }
 }
 
-// Seekbar Tracker Logic
 function uptadeseekbaar(sNumber) {
     let audio = songs_address[sNumber];
     if (!audio) return;
-
     audio.ontimeupdate = null;
-
     audio.ontimeupdate = () => {
         let currentTime = audio.currentTime;
         let duration = audio.duration;
 
-        if (time && !isNaN(duration) && duration > 0) {
-            time.innerHTML = `${formatTime(currentTime)} / ${formatTime(duration)}`;
-        }
-
-        if (song_baar && !isNaN(duration) && duration > 0) {
-            song_baar.value = (currentTime / duration) * 100;
-        }
-
-        if (duration > 0 && currentTime >= duration) {
-            playNextSong();
-        }
+        if (time && !isNaN(duration) && duration > 0) { time.innerHTML = `${formatTime(currentTime)} / ${formatTime(duration)}`; }
+        if (song_baar && !isNaN(duration) && duration > 0) { song_baar.value = (currentTime / duration) * 100; }
+        if (duration > 0 && currentTime >= duration) { playNextSong(); }
     };
 }
 
@@ -227,8 +206,7 @@ function playNextSong() {
 function playLastSong() {
     if (song_name.length === 0) return;
     if (song_baar) song_baar.value = 0;
-    
-    // FIX 1: Proper previous song navigation
+
     if (current_song <= 0) { 
         playSong(song_name.length - 1); 
     } else { 
@@ -238,21 +216,15 @@ function playLastSong() {
 
 async function play_this_song(songNumber) {
     if (!songs_address[songNumber]) return;
-
     if (songs_player[songNumber]) songs_player[songNumber].style.border = "1px solid white";
     if (play_or_pause[songNumber]) play_or_pause[songNumber].src = pause_btn_img;
     if (play_now_text[songNumber]) play_now_text[songNumber].innerHTML = "Playing...";
-
-    // Playbar UI update
     updatePlaybarName(song_name[songNumber]);
-
     if (center_play_img) center_play_img.src = pause_btn_img;
-
     songs_address[songNumber].play();
     play = 1;
     current_song = songNumber;
     await upadating_song_count(current_folder);
-
     if (window.innerWidth <= 800) {
         right.style.display = "block";
         left.style.display = "none";
@@ -269,8 +241,7 @@ async function playSong(songNumber) {
 
 async function check_song() {
     for (let i = 0; i < song_name.length; i++) {
-        if (songs_player[i]) {
-            songs_player[i].onclick = (e) => {
+            songs_player[i].addEventListener("click", () => {
                 if (current_song !== i) { 
                     playSong(i); 
                 } else {
@@ -309,7 +280,6 @@ if (vol_img) {
     });
 }
 
-// Bottom Playbar Center Button Click Handling
 if (center_play_img) {
     center_play_img.addEventListener("click", () => {
         if (current_song === -1 && song_name.length > 0) {
