@@ -82,6 +82,7 @@ async function upadating_song_count(number) {
                             <div class="card_text_2">Nivesh</div>
                         </div>
                     </div>`;
+                }
             }
         } catch (error) {
             console.error(error);
@@ -152,6 +153,7 @@ async function getting_songs(number) {
                             <img class="mini_images_3 song_play_img play_or_pause invert" src="play_btn_1.png" alt="">
                         </div>
                     </div>`;
+                }
             }
         } catch (error) {
             console.error(error);
