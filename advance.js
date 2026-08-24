@@ -22,7 +22,6 @@ let song_baar = document.getElementsByClassName("song_baar")[0];
 let part_1 = document.getElementsByClassName("part_1")[0];
 let play_next = document.getElementsByClassName("play_next")[0];
 let play_last = document.getElementsByClassName("play_last")[0];
-
 let folder_image = "Kishore_Kumar.jpg";
 let unmute_img = "unmute_img.png";
 let mute_img = "mute_img.png";
@@ -134,7 +133,7 @@ async function getting_songs(number) {
                                       .replace(".mp3", "") + "...";
                 song_name.push(nm);
 
-                .innerHTML +=
+                folder_songs_list.innerHTML +=
                     `<div class="songs pointer">
                         <div class="song_list_left">
                             <div class="song_img"><img class="mini_images_2" src="mp3_song.png" alt=""></div>
