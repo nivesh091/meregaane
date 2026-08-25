@@ -701,7 +701,7 @@ body {
 
     .part_3 {
         justify-content: center;
-        gap: 35px;
+        /*gap: 35px;*/
         margin-top: -4px;
     }
 
