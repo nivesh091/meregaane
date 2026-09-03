@@ -391,19 +391,32 @@ document.body.addEventListener("click", function enterFullscreen() {
     document.body.removeEventListener("click", enterFullscreen);
 });
 
-// Screen par kahin bhi tap/click hone par fullscreen trigger karne ke liye
-document.addEventListener('click', () => {
-    if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch((err) => {
-            console.log(`Fullscreen enable nahi ho saka: ${err.message}`);
-        });
-    }
-});
+// // Screen par kahin bhi tap/click hone par fullscreen trigger karne ke liye
+// document.addEventListener('click', () => {
+//     if (!document.fullscreenElement) {
+//         document.documentElement.requestFullscreen().catch((err) => {
+//             console.log(`Fullscreen enable nahi ho saka: ${err.message}`);
+//         });
+//     }
+// });
 
-// Jab screen size ya fullscreen status change ho (e.g., jab user Esc dabaye)
-document.addEventListener('fullscreenchange', () => {
-    if (!document.fullscreenElement) {
-        // Agar exit ho gaya hai, to agle user tap par automatic fir se fullscreen ho jayega
-        console.log("Fullscreen exit ho gaya. Agle tap par fir se fullscreen ho jayega.");
+// // Jab screen size ya fullscreen status change ho (e.g., jab user Esc dabaye)
+// document.addEventListener('fullscreenchange', () => {
+//     if (!document.fullscreenElement) {
+//         // Agar exit ho gaya hai, to agle user tap par automatic fir se fullscreen ho jayega
+//         console.log("Fullscreen exit ho gaya. Agle tap par fir se fullscreen ho jayega.");
+//     }
+// });
+// Global clicklistener ki jagah browser compatibility check karein
+function enableFullscreen() {
+    let elem = document.documentElement;
+    
+    // Check if fullscreen is supported (iOS compatibility check)
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen().catch(err => console.log(err.message));
+    } else if (elem.webkitRequestFullscreen) { /* Safari / iOS */
+        elem.webkitRequestFullscreen();
     }
-});
+}
+
+// Is function ko sirf tabhi call karein jab user explicit fullscreen button dabe, na ki pure document par
