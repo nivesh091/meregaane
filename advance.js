@@ -384,27 +384,7 @@ if (menu_btn) {
     });
 }
 
-// document.body.addEventListener("click", function enterFullscreen() {
-//     document.documentElement.requestFullscreen();
-//     document.body.removeEventListener("click", enterFullscreen);
-// });
-
-// Screen par kahin bhi tap/click hone par fullscreen trigger karne ke liye
-document.addEventListener('click', () => {
-    if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch((err) => {
-            console.log(`Fullscreen enable nahi ho saka: ${err.message}`);
-        });
-    }
-});
-
-// Jab screen size ya fullscreen status change ho (e.g., jab user Esc dabaye)
-document.addEventListener('fullscreenchange', () => {
-    if (!document.fullscreenElement) {
-        // Agar exit ho gaya hai, to agle user tap par automatic fir se fullscreen ho jayega
-        console.log("Fullscreen exit ho gaya. Agle tap par fir se fullscreen ho jayega.");
-    }
-});
-
-
-
+   document.body.addEventListener("click", function enterFullscreen() {
+       document.documentElement.requestFullscreen();
+      document.body.removeEventListener("click", enterFullscreen);
+   });
