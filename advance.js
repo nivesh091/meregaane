@@ -408,15 +408,5 @@ document.body.addEventListener("click", function enterFullscreen() {
 //     }
 // });
 // Global clicklistener ki jagah browser compatibility check karein
-function enableFullscreen() {
-    let elem = document.documentElement;
-    
-    // Check if fullscreen is supported (iOS compatibility check)
-    if (elem.requestFullscreen) {
-        elem.requestFullscreen().catch(err => console.log(err.message));
-    } else if (elem.webkitRequestFullscreen) { /* Safari / iOS */
-        elem.webkitRequestFullscreen();
-    }
-}
 
-// Is function ko sirf tabhi call karein jab user explicit fullscreen button dabe, na ki pure document par
+
