@@ -391,7 +391,6 @@ document.body.addEventListener("click", function enterFullscreen() {
     document.body.removeEventListener("click", enterFullscreen);
 });
 
-
 // Screen par kahin bhi tap/click hone par fullscreen trigger karne ke liye
 document.addEventListener('click', () => {
     if (!document.fullscreenElement) {
