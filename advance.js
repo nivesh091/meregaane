@@ -405,5 +405,3 @@ document.addEventListener('fullscreenchange', () => {
         console.log("Fullscreen exit ho gaya. Agle tap par fir se fullscreen ho jayega.");
     }
 });
-
-iski bajah se to nahi ha ?
