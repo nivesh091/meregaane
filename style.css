@@ -720,3 +720,228 @@ body {
         background-position: 200% 0%;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ==========================================
+     1. MEDIA QUERY: 800px se BADI screens par 
+        saari details hide ho jayengi
+     ========================================== */
+@media screen and (min-width: 801px) {
+    .developer-card {
+        display: none !important;
+    }
+}
+
+/* ==========================================
+     KEYFRAMES: Subtle Entrance Animation
+     ========================================== */
+@keyframes cardAppear {
+    from {
+        opacity: 0;
+        transform: translateY(15px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ==========================================
+     2. MAIN STYLES: Modern Glass & Glow Layout
+     ========================================== */
+.developer-card {
+    z-index: -1;
+    max-width: 90%;
+    margin: 2rem auto;
+    padding: 2.5rem 2rem;
+    border-radius: 24px;
+
+    /* Frosted Glass Background */
+    background: rgb(26 60 78 / 75%);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
+    color: #5252c1;
+
+    /* Glowing Border & Shadow */
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.25rem;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    box-sizing: border-box;
+    margin-top: 40px;
+    margin-bottom: 40px;
+
+    /* Smooth Hover & Entrance Animation */
+    animation: cardAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+        box-shadow 0.4s ease,
+        border-color 0.4s ease;
+}
+
+/* Interactive Hover Effect on Card */
+.developer-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(99, 102, 241, 0.4);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5),
+        0 0 25px rgba(99, 102, 241, 0.15);
+}
+
+/* Animated Glowing Profile Image Wrapper */
+.profile-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    padding: 3px;
+    background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
+    transition: transform 0.4s ease;
+    flex-shrink: 0;
+}
+
+.developer-card:hover .profile-img {
+    transform: scale(1.05) rotate(3deg);
+}
+
+/* Headings & Gradient Typography */
+.developer-info h2 {
+    margin: 0;
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+}
+
+.title {
+    display: inline-block;
+    margin: 0.3rem 0 1rem 0;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+
+    /* Vibrant Gradient Text */
+    background: linear-gradient(135deg, #818cf8, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.intro {
+    color: #a1a1aa;
+    line-height: 1.6;
+    font-size: 0.92rem;
+    margin: 0 0 1.25rem 0;
+}
+
+/* Pill Badges with Soft Hover */
+.skills {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.skills span {
+    background: rgba(255, 255, 255, 0.05);
+    color: #cbd5e1;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0.4rem 0.85rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.skills span:hover {
+    background: rgba(99, 102, 241, 0.2);
+    border-color: #6366f1;
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+/* Glowing Social Action Buttons */
+.social-links {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.social-links a {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 0.65rem 1.25rem;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    border-color: transparent;
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.35);
+    transform: translateY(-2px);
+}
+
+/* Icons ke liye styling update */
+.social-links {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.social-links {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    /* border-radius: 50%; */
+    background-color: #f3f4f6; /* Default light background */
+    transition: all 0.3s ease;
+    padding: 0;
+    text-decoration: none;
+}
+
+/* Hover par scale effect */
+.social-links a:hover {
+    transform: translateY(-3px);
+}
